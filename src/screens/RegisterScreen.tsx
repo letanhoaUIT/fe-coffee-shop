@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
+import api from '../api/axiosConfig'; // Giả sử bạn vẫn muốn sử dụng API để đăng ký
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // Xử lý logic đăng nhập
-    console.log('Login with:', email, password);
+  const handleRegister = async () => {
+    console.log('Register button pressed');
+    try {
+      const response = await api.post('/register', { email, password });
+      console.log('Registration successful:', response.data);
+      // Thực hiện điều gì đó với dữ liệu người dùng
+    } catch (error) {
+
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Register</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -26,7 +33,7 @@ const RegisterScreen = () => {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button title="Register" onPress={handleRegister} />
     </View>
   );
 };

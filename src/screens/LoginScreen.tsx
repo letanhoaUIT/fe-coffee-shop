@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
-import api from '../api/axiosConfig';
-import axios from 'axios';
+import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import api from '../api/axiosConfig'; // Giả sử bạn vẫn muốn sử dụng API để đăng nhập
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-    const handleLogin = async () => {
+  const handleLogin = async () => {
+    console.log('Login button pressed');
     try {
       const response = await api.post('/login', { email, password });
       console.log('Login successful:', response.data);
+      // Thực hiện điều gì đó với dữ liệu người dùng
     } catch (error) {
-      // Kiểm tra xem error có phải là lỗi từ Axios không
-      const errorMessage = axios.isAxiosError(error) 
-        ? error.response?.data || 'No response data' 
-        : 'Unexpected error occurred';
       
-      console.error('Login failed:', errorMessage);
     }
   };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
@@ -36,7 +33,9 @@ const LoginScreen = () => {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Login" onPress={handleLogin} />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -58,6 +57,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

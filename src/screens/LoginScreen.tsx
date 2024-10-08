@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import api from '../api/axiosConfig'; // Giả sử bạn vẫn muốn sử dụng API để đăng nhập
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome'; 
+import { RootStackParamList } from '../navigation/types';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation<NavigationProp>();
 
   const handleLogin = async () => {
     console.log('Login button pressed');
@@ -16,6 +23,16 @@ const LoginScreen = () => {
       
     }
   };
+
+    const handleGoogleLogin = () => {
+      //Xu li logic here
+      console.log('Google login button pressed');
+    };
+
+    const handleFacebookLogin = () => {
+      //xu li
+      console.log('Fb login button pressed');
+    };
 
   return (
     <View style={styles.container}>
@@ -33,8 +50,26 @@ const LoginScreen = () => {
         value={password}
         onChangeText={setPassword}
       />
+      {/*Nut login*/}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.socialText}>Or, login with...</Text>
+
+      {/*Nút google và facbook */}
+      <View style={styles.socialButtonsContainer}>
+          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+            <Icon name="google" size={24} color="red"></Icon>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton} onPress={handleFacebookLogin}>
+            <Icon name="facebook" size={24} color="blue" />
+          </TouchableOpacity>
+      </View>
+      
+      {/*Lien ket toi register*/}
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.registerLink}>New to the app? Register</Text>
       </TouchableOpacity>
     </View>
   );
@@ -68,6 +103,31 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
+   socialButtonsContainer: {
+    flexDirection: 'row', // Căn các nút theo hàng ngang
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  socialButton: {
+    backgroundColor: 'white', // Nền trắng
+    borderColor: 'gray',
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 10, // Khoảng cách giữa các nút
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  registerLink: {
+    color: '#007BFF',
+    marginTop: 20,
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  socialText: {
+    textAlign: 'center',
+    padding: 20,
+  }
 });
 
 export default LoginScreen;

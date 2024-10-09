@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Sử dụng react-native-vector-icons
-import api from '../api/axiosConfig'; // Giả sử bạn vẫn muốn sử dụng API để đăng ký
+import api from '../api/axiosConfig'; // API để đăng ký
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [address, setAddress] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = async () => {
     console.log('Register button pressed');
+
+    if (password !== confirmPassword){
+      console.error('Password does not match');
+      alert('Password does not match');
+      return;
+    }
     try {
       const response = await api.post('/register', { email, password });
       console.log('Registration successful:', response.data);
@@ -34,6 +44,18 @@ const RegisterScreen = () => {
 
       <TextInput
         style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Full name"
+        value={fullName}
+        onChangeText={setFullName}
+        />
+      <TextInput
+        style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
@@ -44,6 +66,13 @@ const RegisterScreen = () => {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+      />
+      <TextInput
+      style={styles.input}
+      placeholder='Confirm password'
+      secureTextEntry
+      value={confirmPassword}
+      onChangeText={setConfirmPassword}
       />
 
       <TouchableOpacity style={styles.button} onPress={handleRegister}>

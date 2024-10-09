@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import api from '../api/axiosConfig'; // Giả sử bạn vẫn muốn sử dụng API để đăng nhập
+import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import api from '../api/axiosConfig'; // sử dụng API để đăng nhập
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import { RootStackParamList } from '../navigation/types';

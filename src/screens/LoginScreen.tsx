@@ -5,12 +5,16 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import { RootStackParamList } from '../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
+// import CheckBox from '@react-native-community/checkbox';
+import Checkbox from 'expo-checkbox';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Trạng thái hiển thị/ẩn mật khẩu
   const navigation = useNavigation<NavigationProp>();
 
   const handleLogin = async () => {
@@ -24,50 +28,73 @@ const LoginScreen = () => {
     }
   };
 
-    const handleGoogleLogin = () => {
-      //Xu li logic here
-      console.log('Google login button pressed');
-    };
+  const handleGoogleLogin = () => {
+    console.log('Google login button pressed');
+  };
 
-    const handleFacebookLogin = () => {
-      //xu li
-      console.log('Fb login button pressed');
-    };
+  const handleFacebookLogin = () => {
+    console.log('Fb login button pressed');
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <TextInput
+      <View style={styles.inputContainer}>
+     <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
       />
+      </View>
+      
+      <View style={styles.inputContainer}>
       <TextInput
-        style={styles.input}
+        style={styles.inputPW}
         placeholder="Password"
-        secureTextEntry
+        secureTextEntry={!showPassword} // Ẩn mật khẩu khi không nhấn vào nút mắt
         value={password}
         onChangeText={setPassword}
       />
-      {/*Nut login*/}
+      {/* Nút chuyển đổi hiển thị mật khẩu */}
+      <TouchableOpacity
+        style={styles.icon}
+        onPress={() => setShowPassword(!showPassword)}
+      >
+        <Icon
+          name={showPassword ? 'eye' : 'eye-slash'} // Đổi biểu tượng khi nhấn
+          size={20}
+          color="gray"
+        />
+      </TouchableOpacity>
+    </View>
+
+      <View style={styles.rememberMeContainer}>
+        <Checkbox
+          value={rememberMe}
+          onValueChange={setRememberMe}
+        />
+        <Text style={styles.rememberMeText}>Remember Me</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+          <Text style={styles.forgotPassword}>Forgot Password?</Text>
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
       <Text style={styles.socialText}>Or, login with...</Text>
 
-      {/*Nút google và facbook */}
       <View style={styles.socialButtonsContainer}>
-          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
-            <Icon name="google" size={24} color="red"></Icon>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton} onPress={handleFacebookLogin}>
-            <Icon name="facebook" size={24} color="blue" />
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+          <Icon name="google" size={24} color="red"></Icon>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton} onPress={handleFacebookLogin}>
+          <Icon name="facebook" size={24} color="blue" />
+        </TouchableOpacity>
       </View>
-      
-      {/*Lien ket toi register*/}
+
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
         <Text style={styles.registerLink}>New to the app? Register</Text>
       </TouchableOpacity>
@@ -81,13 +108,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 10,
-  },
+  // input: {
+  //   height: 40,
+  //   borderColor: 'gray',
+  //   borderWidth: 1,
+  //   marginBottom: 12,
+  //   paddingHorizontal: 10,
+  // },
   title: {
     fontSize: 24,
     marginBottom: 20,
@@ -103,18 +130,18 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
-   socialButtonsContainer: {
-    flexDirection: 'row', // Căn các nút theo hàng ngang
+  socialButtonsContainer: {
+    flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 10,
   },
   socialButton: {
-    backgroundColor: 'white', // Nền trắng
+    backgroundColor: 'white',
     borderColor: 'gray',
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
-    marginHorizontal: 10, // Khoảng cách giữa các nút
+    marginHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -127,7 +154,43 @@ const styles = StyleSheet.create({
   socialText: {
     textAlign: 'center',
     padding: 20,
-  }
+  },
+  rememberMeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Căn đều khoảng trống giữa các thành phần
+    // marginBottom: 20,
+    marginVertical: 20, //can deu theo chieu doc (tren duoi)
+  },
+  rememberMeText: {
+    fontSize: 16,
+    paddingRight: 80,
+  },
+  forgotPassword: {
+    color: '#007BFF',
+    fontSize: 16,
+  },
+  inputContainer: {
+    flexDirection: 'row', // Căn icon và TextInput theo chiều ngang
+    alignItems: 'center',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 12,
+
+  },
+  input: {
+    // flex: 1, // Để TextInput chiếm hết khoảng trống
+    height: 40,
+  },
+    inputPW: {
+    flex: 1, // Để TextInput chiếm hết khoảng trống
+    height: 40,
+  },
+  icon: {
+    paddingHorizontal: 10, // Khoảng cách giữa biểu tượng và TextInput
+  },
 });
 
 export default LoginScreen;

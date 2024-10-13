@@ -3,6 +3,8 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import ForgotPasswordScreen from '../screens/ForgetPassword/ForgotPassword';
+import NewCredentials from '../screens/ForgetPassword/NewCredentials';
 import { RootStackParamList } from './types';
 import HomeScreen from '../screens/HomeScreen';
 import { Header } from 'react-navigation-stack';
@@ -11,10 +13,12 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Register" screenOptions={{headerShown: false}}>
+    <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Home" component={BottomTabNavigator} />
+      <Stack.Screen name="HomeScn" component={BottomTabNavigator} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Screen name="NewCredentials" component={NewCredentials} />
     </Stack.Navigator>
   );
 };

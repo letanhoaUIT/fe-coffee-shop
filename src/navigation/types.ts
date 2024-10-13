@@ -2,6 +2,8 @@
 export type RootStackParamList = {
   Login: undefined;    // Không truyền tham số
   Register: undefined;
-  Home: undefined;
+  HomeScn: undefined;
   BottomTabNavigator: undefined;
+  ForgotPassword: undefined;
+  NewCredentials: undefined;
 };

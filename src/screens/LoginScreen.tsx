@@ -7,6 +7,7 @@ import { RootStackParamList } from '../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 // import CheckBox from '@react-native-community/checkbox';
 import Checkbox from 'expo-checkbox';
+import { Alert } from 'react-native';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -14,17 +15,24 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Trạng thái hiển thị/ẩn mật khẩu
+  const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigation<NavigationProp>();
 
   const handleLogin = async () => {
     console.log('Login button pressed');
+    if (!email || !password){
+      Alert.alert('Error', 'Email and Password are required');
+      return;
+    }
+
     try {
-      const response = await api.post('/login', { email, password });
+      const response = await api.post('auth/login', { email, password });
       console.log('Login successful:', response.data);
-      // Thực hiện điều gì đó với dữ liệu người dùng
+      Alert.alert('Success', 'Login Successful!');
+      navigation.navigate('HomeScn');
     } catch (error) {
-      
+      console.log(error);
+      Alert.alert('Error', 'Invalid email or password!');
     }
   };
 
@@ -52,7 +60,7 @@ const LoginScreen = () => {
       <TextInput
         style={styles.inputPW}
         placeholder="Password"
-        secureTextEntry={!showPassword} // Ẩn mật khẩu khi không nhấn vào nút mắt
+        secureTextEntry={!showPassword} 
         value={password}
         onChangeText={setPassword}
       />
@@ -62,7 +70,7 @@ const LoginScreen = () => {
         onPress={() => setShowPassword(!showPassword)}
       >
         <Icon
-          name={showPassword ? 'eye' : 'eye-slash'} // Đổi biểu tượng khi nhấn
+          name={showPassword ? 'eye' : 'eye-slash'}
           size={20}
           color="gray"
         />

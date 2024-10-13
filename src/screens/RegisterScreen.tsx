@@ -47,7 +47,7 @@ const RegisterScreen = () => {
     });
     console.log('Registration successful:', response.data);
     Alert.alert('Success', 'Registration successful!');
-    navigation.navigate('Home'); 
+    navigation.navigate('HomeScn')
   } catch (error: any) {
     console.error('Registration error response:', error);
 

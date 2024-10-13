@@ -11,7 +11,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
+    <Stack.Navigator initialRouteName="Register" screenOptions={{headerShown: false}}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Home" component={BottomTabNavigator} />

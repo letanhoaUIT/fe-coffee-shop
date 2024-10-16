@@ -5,5 +5,7 @@ export type RootStackParamList = {
   HomeScn: undefined;
   BottomTabNavigator: undefined;
   ForgotPassword: undefined;
-  NewCredentials: undefined;
+  NewCredentials: { email: string }; 
+  Bean: undefined;
+
 };

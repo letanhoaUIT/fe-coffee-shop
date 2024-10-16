@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Sử dụng react-native-vector-icons
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 import api from '../api/axiosConfig'; // API để đăng ký
 import { useNavigation } from '@react-navigation/native'; 
 

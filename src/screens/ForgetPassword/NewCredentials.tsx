@@ -34,14 +34,14 @@ const NewCredentials: React.FC<Props> = ({ route }) => {
     }
 
     try {
-      // Gửi yêu cầu để tìm userId và cập nhật mật khẩu
+      // Gửi yêu cầu để cập nhật mật khẩu
       const response = await api.post('auth/update-password', { email, newPassword });
 
       if (response.status === 200) {
         Alert.alert('Success', 'Your password has been updated!');
         navigation.navigate('Login');
       } else {
-        Alert.alert('Error', response.data.message);
+        Alert.alert('Error', response.data.message || 'Failed to update password.');
       }
     } catch (error) {
       console.error('API Error:', error);
@@ -52,7 +52,7 @@ const NewCredentials: React.FC<Props> = ({ route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>NEW CREDENTIALS</Text>
-      <Text>Your identity has been verified! Set your new password</Text>
+      <Text style={styles.subtitle}>Your identity has been verified! Set your new password</Text>
 
       <TextInput
         style={styles.input}
@@ -60,6 +60,8 @@ const NewCredentials: React.FC<Props> = ({ route }) => {
         secureTextEntry
         value={newPassword}
         onChangeText={setNewPassword}
+        autoCapitalize="none"
+        testID="new-password-input" // Thêm testID cho việc kiểm thử
       />
       <TextInput
         style={styles.input}
@@ -67,9 +69,11 @@ const NewCredentials: React.FC<Props> = ({ route }) => {
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
+        autoCapitalize="none"
+        testID="confirm-password-input" // Thêm testID cho việc kiểm thử
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+      <TouchableOpacity style={styles.button} onPress={handleUpdate} testID="update-button">
         <Text style={styles.buttonText}>UPDATE</Text>
       </TouchableOpacity>
     </View>
@@ -77,11 +81,12 @@ const NewCredentials: React.FC<Props> = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
-  title: { fontSize: 24, textAlign: 'center', marginBottom: 10 },
-  input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, paddingHorizontal: 10 },
+  container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: 'white' },
+  title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 },
+  subtitle: { textAlign: 'center', marginBottom: 20, color: 'gray' },
+  input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, paddingHorizontal: 10, borderRadius: 5 },
   button: { backgroundColor: 'yellow', padding: 10, borderRadius: 5, alignItems: 'center' },
-  buttonText: { color: 'black', fontSize: 16 },
+  buttonText: { color: 'black', fontSize: 16, fontWeight: 'bold' },
 });
 
 export default NewCredentials;

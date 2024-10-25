@@ -11,6 +11,10 @@ const UserProfileScreen = () => {
     navigation.navigate('EditProfile'); // Điều hướng sang màn hình EditProfile
   };
 
+  const handleChangePassword = () => {
+    navigation.navigate('ChangePassword'); // Điều hướng sang màn hình ChangePassword
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -34,6 +38,9 @@ const UserProfileScreen = () => {
         <Text style={styles.userHandle}>@eben10</Text>
         <TouchableOpacity style={styles.editProfileButton} onPress={handleEditProfile}>
           <Text style={styles.editProfileText}>Edit Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.changePasswordButton} onPress={handleChangePassword}>
+          <Text style={styles.changePasswordText}>Change Password</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -82,6 +89,17 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   editProfileText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  changePasswordButton: {
+    backgroundColor: '#E0E0E0',
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 20,
+  },
+  changePasswordText: {
     fontSize: 16,
     fontWeight: 'bold',
   },

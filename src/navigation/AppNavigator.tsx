@@ -8,6 +8,7 @@ import NewCredentials from '../screens/ForgetPassword/NewCredentials';
 import BeanDetailScreen from '../screens/BeanDetail';
 import CoffeeDetailScreen from '../screens/CoffeeDetailScreen';
 import CartScreen from '../screens/CartScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import { RootStackParamList } from './types';
 import BottomTabNavigator from './BottomTabNavigator';
@@ -25,6 +26,7 @@ const AppNavigator = () => {
       <Stack.Screen name="CoffeeDetail" component={CoffeeDetailScreen} />
       <Stack.Screen name="Cart" component={CartScreen} />
       <Stack.Screen name="Payment" component={PaymentScreen} />
+      <Stack.Screen name="Favorites" component={FavoritesScreen} /> 
     </Stack.Navigator>
   );
 };

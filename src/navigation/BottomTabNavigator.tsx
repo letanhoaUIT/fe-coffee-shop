@@ -1,5 +1,5 @@
 //BottomTabNavigator.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HomeScreen from '../screens/HomeScreen';
@@ -10,6 +10,7 @@ import HistoryOrderScreen from '../screens/HistoryOrderScreen';
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
+  const [favoriteCount, setFavoriteCount] = useState(3);
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -39,7 +40,17 @@ const BottomTabNavigator = () => {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Cart" component={CartScreen} />
-      <Tab.Screen name="Favorites" component={FavoritesScreen} />
+      <Tab.Screen
+        name="Favorites"
+        component={FavoritesScreen}
+        options={{
+          tabBarBadge: favoriteCount > 0 ? favoriteCount : undefined, // Hiển thị huy hiệu nếu có mục yêu thích
+          tabBarBadgeStyle: {
+            backgroundColor: '#FF6C00',
+            color: '#fff',
+          },
+        }}
+      />
       <Tab.Screen name="History" component={HistoryOrderScreen} />
     </Tab.Navigator>
   );

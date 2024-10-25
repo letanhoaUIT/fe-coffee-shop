@@ -7,6 +7,10 @@ import { useNavigation } from '@react-navigation/native';
 const UserProfileScreen = () => {
   const navigation = useNavigation();
 
+  const handleEditProfile = () => {
+    navigation.navigate('EditProfile'); // Điều hướng sang màn hình EditProfile
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -28,7 +32,7 @@ const UserProfileScreen = () => {
         />
         <Text style={styles.userName}>Ebenezer Omosuli</Text>
         <Text style={styles.userHandle}>@eben10</Text>
-        <TouchableOpacity style={styles.editProfileButton}>
+        <TouchableOpacity style={styles.editProfileButton} onPress={handleEditProfile}>
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>

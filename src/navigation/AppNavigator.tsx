@@ -14,6 +14,7 @@ import { RootStackParamList } from './types';
 import BottomTabNavigator from './BottomTabNavigator';
 import OrderHistoryScreen from '../screens/OrderHistoryScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -32,6 +33,7 @@ const AppNavigator = () => {
       <Stack.Screen name="Favorites" component={FavoritesScreen} /> 
       <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
       <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     </Stack.Navigator>
   );
 };

@@ -10,6 +10,7 @@ export type RootStackParamList = {
   NewCredentials: { email: string };
   Bean: { product: { name: string; description: string; price: number; image: string } }; // Kiểu của product
   CoffeeDetail: { product: any };
+  Cart: undefined;
 };
 
 export type BeanDetailScreenRouteProp = RouteProp<RootStackParamList, 'Bean'>;

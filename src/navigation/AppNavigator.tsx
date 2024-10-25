@@ -12,6 +12,8 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import { RootStackParamList } from './types';
 import BottomTabNavigator from './BottomTabNavigator';
+import OrderHistoryScreen from '../screens/OrderHistoryScreen';
+
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
@@ -27,6 +29,7 @@ const AppNavigator = () => {
       <Stack.Screen name="Cart" component={CartScreen} />
       <Stack.Screen name="Payment" component={PaymentScreen} />
       <Stack.Screen name="Favorites" component={FavoritesScreen} /> 
+      <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
     </Stack.Navigator>
   );
 };

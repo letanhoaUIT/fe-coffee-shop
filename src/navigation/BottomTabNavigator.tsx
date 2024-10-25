@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import HomeScreen from '../screens/HomeScreen';
 import CartScreen from '../screens/CartScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
-import HistoryOrderScreen from '../screens/HistoryOrderScreen';
+import OrderHistory from '../screens/OrderHistoryScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,7 +51,7 @@ const BottomTabNavigator = () => {
           },
         }}
       />
-      <Tab.Screen name="History" component={HistoryOrderScreen} />
+      <Tab.Screen name="History" component={OrderHistory} />
     </Tab.Navigator>
   );
 };

@@ -1,11 +1,16 @@
 // src/navigation/types.ts
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
+
 export type RootStackParamList = {
-  Login: undefined;    // Không truyền tham số
+  Login: undefined;
   Register: undefined;
   HomeScn: undefined;
-  BottomTabNavigator: undefined;
   ForgotPassword: undefined;
-  NewCredentials: { email: string }; 
-  Bean: undefined;
-
+  NewCredentials: { email: string };
+  Bean: { product: { name: string; description: string; price: number; image: string } }; // Kiểu của product
+  CoffeeDetail: { product: any };
 };
+
+export type BeanDetailScreenRouteProp = RouteProp<RootStackParamList, 'Bean'>;
+export type BeanDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Bean'>;

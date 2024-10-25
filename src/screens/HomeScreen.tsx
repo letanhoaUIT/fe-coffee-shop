@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, ScrollView, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigation/types'; // Nhớ import kiểu RootStackParamList
+
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScn'>;
 
 const categories = ['All', 'Cappuccino', 'Espresso', 'Americano', 'Macchiato'];
 const coffeeProducts = [
@@ -13,6 +18,15 @@ const coffeeProducts = [
 
 const HomeScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const navigation = useNavigation<HomeScreenNavigationProp>(); // Sử dụng kiểu điều hướng chính xác
+
+  const handlePressProduct = (product: any) => {
+    navigation.navigate('Bean', { product }); // Điều hướng với tham số product
+  };
+
+  const handlePressCoffee = (product: any) => {
+    navigation.navigate('CoffeeDetail', { product }); // Điều hướng với tham số product
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -50,17 +64,19 @@ const HomeScreen = () => {
         data={coffeeProducts.filter(product => product.name.toLowerCase().includes('cappuccino'))}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={{ uri: item.image }} style={styles.productImage} />
-            <View style={styles.productInfo}>
-              <Text style={styles.productName}>{item.name}</Text>
-              <Text style={styles.productDescription}>{item.description}</Text>
-              <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+          <TouchableOpacity onPress={() => handlePressCoffee(item)}>
+            <View style={styles.card}>
+              <Image source={{ uri: item.image }} style={styles.productImage} />
+              <View style={styles.productInfo}>
+                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productDescription}>{item.description}</Text>
+                <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+              </View>
+              <TouchableOpacity style={styles.addButton}>
+                <Icon name="plus" size={16} color="#fff" />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.addButton}>
-              <Icon name="plus" size={16} color="#fff" />
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         )}
       />
 
@@ -71,17 +87,19 @@ const HomeScreen = () => {
         data={coffeeProducts.filter(product => product.name.toLowerCase().includes('beans'))}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={{ uri: item.image }} style={styles.productImage} />
-            <View style={styles.productInfo}>
-              <Text style={styles.productName}>{item.name}</Text>
-              <Text style={styles.productDescription}>{item.description}</Text>
-              <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+          <TouchableOpacity onPress={() => handlePressProduct(item)}>
+            <View style={styles.card}>
+              <Image source={{ uri: item.image }} style={styles.productImage} />
+              <View style={styles.productInfo}>
+                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productDescription}>{item.description}</Text>
+                <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+              </View>
+              <TouchableOpacity style={styles.addButton}>
+                <Icon name="plus" size={16} color="#fff" />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.addButton}>
-              <Icon name="plus" size={16} color="#fff" />
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </ScrollView>

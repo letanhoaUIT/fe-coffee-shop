@@ -1,38 +1,30 @@
+// src/screens/CoffeeDetailScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-const BeanDetailScreen = ({ route }) => {
+const CoffeeDetailScreen = ({ route }) => {
   const { product } = route.params; // Lấy dữ liệu sản phẩm từ params
-  const [selectedSize, setSelectedSize] = useState('250gm');
+  const [selectedSize, setSelectedSize] = useState('S'); // Mặc định size là 'S'
 
   return (
     <View style={styles.container}>
       {/* Ảnh sản phẩm */}
       <Image source={{ uri: product.image }} style={styles.image} />
 
-      {/* Tên sản phẩm và mô tả */}
+      {/* Thông tin sản phẩm */}
       <View style={styles.infoContainer}>
         <Text style={styles.productName}>{product.name}</Text>
-        <Text style={styles.origin}>From {product.origin || 'Unknown'}</Text>
+        <Text style={styles.description}>{product.description}</Text>
         <View style={styles.ratingContainer}>
           <Text style={styles.rating}>⭐ {product.rating || 'N/A'}</Text>
           <Text style={styles.ratingCount}>({product.ratingCount || 'N/A'})</Text>
         </View>
-        <Text style={styles.roastType}>{product.roastType || 'Medium Roasted'}</Text>
       </View>
 
-      {/* Mô tả chi tiết sản phẩm */}
-      <View style={styles.descriptionContainer}>
-        <Text style={styles.descriptionTitle}>Description</Text>
-        <Text style={styles.description}>
-          {product.description || 'No description available for this product.'}
-        </Text>
-      </View>
-
-      {/* Lựa chọn kích thước */}
+      {/* Lựa chọn size */}
       <Text style={styles.sizeTitle}>Size</Text>
       <View style={styles.sizeOptions}>
-        {['250gm', '500gm', '1000gm'].map((size) => (
+        {['S', 'M', 'L'].map((size) => (
           <TouchableOpacity
             key={size}
             style={[
@@ -82,15 +74,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-  origin: {
-    color: '#ff7f50',
+  description: {
+    color: '#ccc',
     fontSize: 16,
-    marginVertical: 4,
+    marginTop: 8,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 8,
   },
   rating: {
     color: '#ffdd00',
@@ -99,25 +91,6 @@ const styles = StyleSheet.create({
   ratingCount: {
     color: 'gray',
     marginLeft: 8,
-  },
-  roastType: {
-    color: '#ccc',
-    fontSize: 14,
-    marginTop: 8,
-  },
-  descriptionContainer: {
-    marginTop: 16,
-  },
-  descriptionTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  description: {
-    color: '#ccc',
-    fontSize: 14,
-    lineHeight: 20,
   },
   sizeTitle: {
     color: '#fff',
@@ -171,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BeanDetailScreen;
+export default CoffeeDetailScreen;

@@ -17,6 +17,7 @@ const coffeeProducts = [
 ];
 
 const HomeScreen = () => {
+  const [avatarUrl, setAvatarUrl] = useState('https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png'); 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const navigation = useNavigation<HomeScreenNavigationProp>(); // Sử dụng kiểu điều hướng chính xác
 
@@ -28,12 +29,19 @@ const HomeScreen = () => {
     navigation.navigate('CoffeeDetail', { product }); // Điều hướng với tham số product
   };
 
+  const handlePressUser = () => {
+    navigation.navigate('UserProfile'); // Điều hướng đến màn hình UserProfile
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Find the best coffee for you</Text>
-        <Icon name="user" size={30} color="#fff" />
+        <TouchableOpacity onPress={handlePressUser}>
+          {/* Hiển thị hình đại diện (avatar) */}
+          <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+        </TouchableOpacity>
       </View>
 
       {/* Search Bar */}
@@ -123,6 +131,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     flex: 1,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   searchContainer: {
     flexDirection: 'row',

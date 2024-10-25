@@ -13,6 +13,8 @@ export type RootStackParamList = {
   Cart: undefined;
   Payment: { totalPrice: number };
   Favorites: undefined;
+  OrderHistory: undefined;
+  UserProfile: undefined;
 };
 
 export type BeanDetailScreenRouteProp = RouteProp<RootStackParamList, 'Bean'>;

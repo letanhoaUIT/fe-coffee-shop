@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect  } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, StyleSheet, Image, FlatList, TouchableOpacity, PanResponder, Animated, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
@@ -7,7 +7,7 @@ import { RootStackParamList } from '../navigation/types'; // Nhớ import kiểu
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScn'>;
 
-const { width } = Dimensions.get('window'); // Lấy chiều rộng màn hình để làm banner cuộn
+const { width, height } = Dimensions.get('window'); // Lấy chiều rộng và chiều cao màn hình
 
 const bannerImages = [
   'https://img.buzzfeed.com/buzzfeed-static/static/2024-08/30/22/asset/673a78601a5a/sub-buzz-1848-1725055325-1.jpg',
@@ -44,7 +44,7 @@ const HomeScreen = () => {
     navigation.navigate('UserProfile'); // Điều hướng đến màn hình UserProfile
   };
 
-    // Banner auto-scroll
+  // Banner auto-scroll
   useEffect(() => {
     const interval = setInterval(() => {
       if (scrollViewRef.current) {
@@ -87,7 +87,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Find the best coffee for you</Text>
@@ -118,7 +118,7 @@ const HomeScreen = () => {
         ))}
       </ScrollView>
 
-        {/* Banner tự động cuộn */}
+      {/* Banner tự động cuộn */}
       <ScrollView
         ref={scrollViewRef}
         horizontal
@@ -135,6 +135,29 @@ const HomeScreen = () => {
           <Image key={index} source={{ uri: image }} style={styles.bannerImage} />
         ))}
       </ScrollView>
+
+      {/* Best Seller */}
+      <Text style={styles.sectionTitle}>Món ngon phải thử</Text>
+      <FlatList
+        horizontal
+        data={coffeeProducts.filter(product => product.name.toLowerCase().includes('cappuccino'))}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handlePressCoffee(item)}>
+            <View style={styles.card}>
+              <Image source={{ uri: item.image }} style={styles.productImage} />
+              <View style={styles.productInfo}>
+                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productDescription}>{item.description}</Text>
+                <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+              </View>
+              <TouchableOpacity style={styles.addButton}>
+                <Icon name="plus" size={16} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
 
       {/* Coffee List */}
       <Text style={styles.sectionTitle}>Coffee Drinks</Text>
@@ -189,7 +212,7 @@ const HomeScreen = () => {
       >
         <Icon name="comments" size={40} color="#fff" onPress={handleChatbotPress} />
       </Animated.View>
-    </View>
+    </ScrollView>
   );
 };
 

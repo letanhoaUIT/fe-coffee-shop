@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, ScrollView, StyleSheet, Image, FlatList, TouchableOpacity, PanResponder, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -17,7 +17,7 @@ const coffeeProducts = [
 ];
 
 const HomeScreen = () => {
-  const [avatarUrl, setAvatarUrl] = useState('https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png'); 
+  const [avatarUrl, setAvatarUrl] = useState('https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const navigation = useNavigation<HomeScreenNavigationProp>(); // Sử dụng kiểu điều hướng chính xác
 
@@ -33,8 +33,37 @@ const HomeScreen = () => {
     navigation.navigate('UserProfile'); // Điều hướng đến màn hình UserProfile
   };
 
+  // Sử dụng Animated.Value để theo dõi vị trí của biểu tượng
+  const pan = useRef(new Animated.ValueXY()).current;
+
+  // Tạo PanResponder để xử lý các sự kiện kéo thả
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => true, // Kích hoạt PanResponder khi người dùng bắt đầu kéo
+      onPanResponderGrant: () => {
+        // Đặt giá trị ban đầu cho PanResponder
+        pan.setOffset({
+          x: pan.x._value,
+          y: pan.y._value,
+        });
+      },
+      onPanResponderMove: Animated.event(
+        [null, { dx: pan.x, dy: pan.y }],
+        { useNativeDriver: false } // Không sử dụng Native Driver để điều khiển giá trị Animated
+      ),
+      onPanResponderRelease: () => {
+        pan.flattenOffset(); // Xóa offset khi người dùng thả biểu tượng
+      },
+    })
+  ).current;
+
+  // Xử lý khi nhấn vào biểu tượng chatbot
+  const handleChatbotPress = () => {
+    navigation.navigate('ChatBotScreen');
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Find the best coffee for you</Text>
@@ -110,7 +139,15 @@ const HomeScreen = () => {
           </TouchableOpacity>
         )}
       />
-    </ScrollView>
+
+      {/* Animated View cho biểu tượng chatbot */}
+      <Animated.View
+        {...panResponder.panHandlers}
+        style={[pan.getLayout(), styles.chatbotButton, { zIndex: 9999 }]} // ZIndex giúp biểu tượng chatbot nằm trên cùng
+      >
+        <Icon name="comments" size={40} color="#fff" onPress={handleChatbotPress} />
+      </Animated.View>
+    </View>
   );
 };
 
@@ -208,6 +245,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#ff7f50',
     borderRadius: 20,
     padding: 8,
+  },
+  chatbotButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#007BFF',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    position: 'absolute',
+    bottom: 50,
+    right: 20,
   },
 });
 

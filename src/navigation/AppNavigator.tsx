@@ -16,6 +16,7 @@ import OrderHistoryScreen from '../screens/OrderHistoryScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import ChangePasswordScreen from '../screens/ChangePasswordScreen';
+import ChatBotScreen from '../screens/ChatBotScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -36,6 +37,7 @@ const AppNavigator = () => {
       <Stack.Screen name="UserProfile" component={UserProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+      <Stack.Screen name="ChatBotScreen" component={ChatBotScreen} />
     </Stack.Navigator>
   );
 };

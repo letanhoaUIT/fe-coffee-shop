@@ -1,11 +1,19 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, Image, FlatList, TouchableOpacity, PanResponder, Animated } from 'react-native';
+import React, { useState, useRef, useEffect  } from 'react';
+import { View, Text, TextInput, ScrollView, StyleSheet, Image, FlatList, TouchableOpacity, PanResponder, Animated, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/types'; // Nhớ import kiểu RootStackParamList
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScn'>;
+
+const { width } = Dimensions.get('window'); // Lấy chiều rộng màn hình để làm banner cuộn
+
+const bannerImages = [
+  'https://img.buzzfeed.com/buzzfeed-static/static/2024-08/30/22/asset/673a78601a5a/sub-buzz-1848-1725055325-1.jpg',
+  'https://img.lovepik.com/photo/20211119/small/lovepik-delicious-coffee-and-coffee-beans-picture_500217119.jpg',
+  'https://img.lovepik.com/photo/48017/7352.jpg_wh300.jpg',
+];
 
 const categories = ['All', 'Cappuccino', 'Espresso', 'Americano', 'Macchiato'];
 const coffeeProducts = [
@@ -20,6 +28,9 @@ const HomeScreen = () => {
   const [avatarUrl, setAvatarUrl] = useState('https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const navigation = useNavigation<HomeScreenNavigationProp>(); // Sử dụng kiểu điều hướng chính xác
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const scrollViewRef = useRef<ScrollView | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePressProduct = (product: any) => {
     navigation.navigate('Bean', { product }); // Điều hướng với tham số product
@@ -32,6 +43,19 @@ const HomeScreen = () => {
   const handlePressUser = () => {
     navigation.navigate('UserProfile'); // Điều hướng đến màn hình UserProfile
   };
+
+    // Banner auto-scroll
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (scrollViewRef.current) {
+        const nextIndex = (currentIndex + 1) % bannerImages.length;
+        setCurrentIndex(nextIndex);
+        scrollViewRef.current.scrollTo({ x: nextIndex * width, animated: true });
+      }
+    }, 3000); // Mỗi 3 giây cuộn một ảnh
+
+    return () => clearInterval(interval); // Dọn dẹp khi component unmount
+  }, [currentIndex]);
 
   // Sử dụng Animated.Value để theo dõi vị trí của biểu tượng
   const pan = useRef(new Animated.ValueXY()).current;
@@ -91,6 +115,24 @@ const HomeScreen = () => {
               {category}
             </Text>
           </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+        {/* Banner tự động cuộn */}
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: false }
+        )}
+        style={styles.banner}
+      >
+        {bannerImages.map((image, index) => (
+          <Image key={index} source={{ uri: image }} style={styles.bannerImage} />
         ))}
       </ScrollView>
 
@@ -256,6 +298,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 50,
     right: 20,
+  },
+  banner: {
+    height: 200,
+    marginBottom: 20,
+  },
+  bannerImage: {
+    width: width, // Lấy chiều rộng màn hình cho hình ảnh
+    height: '100%',
+    resizeMode: 'cover',
   },
 });
 

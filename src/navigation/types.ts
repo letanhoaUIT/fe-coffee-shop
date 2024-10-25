@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Bean: { product: { name: string; description: string; price: number; image: string } }; // Kiểu của product
   CoffeeDetail: { product: any };
   Cart: undefined;
+  Payment: { totalPrice: number };
 };
 
 export type BeanDetailScreenRouteProp = RouteProp<RootStackParamList, 'Bean'>;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
 const initialCartItems = [
   {
@@ -37,6 +38,7 @@ const initialCartItems = [
 
 const CartScreen = () => {
   const [cartItems, setCartItems] = useState(initialCartItems);
+  const navigation = useNavigation();
 
   const handleQuantityChange = (id: number, change: number) => {
     const updatedItems = cartItems.map(item => {
@@ -60,6 +62,9 @@ const CartScreen = () => {
 
   const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
 
+  const handlePay = () => {
+    navigation.navigate('Payment', { totalPrice: parseFloat(totalPrice) }); // Điều hướng đến PaymentScreen
+  };
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -123,7 +128,7 @@ const CartScreen = () => {
       {/* Total Price and Pay Button */}
       <View style={styles.footer}>
         <Text style={styles.totalPrice}>Total Price: ${totalPrice}</Text>
-        <TouchableOpacity style={styles.payButton}>
+        <TouchableOpacity style={styles.payButton} onPress={handlePay}>
           <Text style={styles.payButtonText}>Pay</Text>
         </TouchableOpacity>
       </View>

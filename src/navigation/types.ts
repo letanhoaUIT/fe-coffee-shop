@@ -17,7 +17,6 @@ export type RootStackParamList = {
   UserProfile: undefined;
   EditProfile: undefined;
   ChangePassword: undefined;
-  ChatBotScreen: undefined;
 };
 
 export type BeanDetailScreenRouteProp = RouteProp<RootStackParamList, 'Bean'>;

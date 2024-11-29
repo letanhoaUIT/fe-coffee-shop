@@ -4,18 +4,36 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/types'; // Nhớ import kiểu RootStackParamList
+import Banner from '../components/Home/Banner';
+import CoffeeItem from '../components/Home/CoffeeItem';
+
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScn'>;
 
 const { width, height } = Dimensions.get('window'); // Lấy chiều rộng và chiều cao màn hình
 
-const bannerImages = [
+// Màu sắc chủ đạo theo hình ảnh mẫu
+const backgroundColor = '#white'; // Màu nền sáng
+const primaryColor = '#0f4359'; // Màu chủ xanh dương
+const secondaryColor = '#8d6e52'; // Màu phụ đất
+
+const categories = ['All', 'Cappuccino', 'Espresso', 'Americano', 'Macchiato'];
+
+
+const HomeScreen = () => {
+  const [avatarUrl, setAvatarUrl] = useState('https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const navigation = useNavigation<HomeScreenNavigationProp>(); 
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const scrollViewRef = useRef<ScrollView | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const bannerImages = [
   'https://img.buzzfeed.com/buzzfeed-static/static/2024-08/30/22/asset/673a78601a5a/sub-buzz-1848-1725055325-1.jpg',
   'https://img.lovepik.com/photo/20211119/small/lovepik-delicious-coffee-and-coffee-beans-picture_500217119.jpg',
   'https://img.lovepik.com/photo/48017/7352.jpg_wh300.jpg',
 ];
 
-const categories = ['All', 'Cappuccino', 'Espresso', 'Americano', 'Macchiato'];
 const coffeeProducts = [
   { id: 1, name: 'Cappuccino', description: 'With Steamed Milk', price: 4.20, rating: 4.5, image: 'https://example.com/cappuccino1.jpg' },
   { id: 2, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://example.com/cappuccino2.jpg' },
@@ -23,15 +41,6 @@ const coffeeProducts = [
   { id: 4, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://example.com/beans2.jpg' },
   { id: 5, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://example.com/beans2.jpg' },
 ];
-
-const HomeScreen = () => {
-  const [avatarUrl, setAvatarUrl] = useState('https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const navigation = useNavigation<HomeScreenNavigationProp>(); // Sử dụng kiểu điều hướng chính xác
-  const scrollX = useRef(new Animated.Value(0)).current;
-  const scrollViewRef = useRef<ScrollView | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   const handlePressProduct = (product: any) => {
     navigation.navigate('Bean', { product }); // Điều hướng với tham số product
   };
@@ -44,18 +53,6 @@ const HomeScreen = () => {
     navigation.navigate('UserProfile'); // Điều hướng đến màn hình UserProfile
   };
 
-  // Banner auto-scroll
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (scrollViewRef.current) {
-        const nextIndex = (currentIndex + 1) % bannerImages.length;
-        setCurrentIndex(nextIndex);
-        scrollViewRef.current.scrollTo({ x: nextIndex * width, animated: true });
-      }
-    }, 3000); // Mỗi 3 giây cuộn một ảnh
-
-    return () => clearInterval(interval); // Dọn dẹp khi component unmount
-  }, [currentIndex]);
 
   // Sử dụng Animated.Value để theo dõi vị trí của biểu tượng
   const pan = useRef(new Animated.ValueXY()).current;
@@ -63,9 +60,8 @@ const HomeScreen = () => {
   // Tạo PanResponder để xử lý các sự kiện kéo thả
   const panResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: () => true, // Kích hoạt PanResponder khi người dùng bắt đầu kéo
+      onMoveShouldSetPanResponder: () => true, 
       onPanResponderGrant: () => {
-        // Đặt giá trị ban đầu cho PanResponder
         pan.setOffset({
           x: pan.x._value,
           y: pan.y._value,
@@ -73,44 +69,44 @@ const HomeScreen = () => {
       },
       onPanResponderMove: Animated.event(
         [null, { dx: pan.x, dy: pan.y }],
-        { useNativeDriver: false } // Không sử dụng Native Driver để điều khiển giá trị Animated
+        { useNativeDriver: false }
       ),
       onPanResponderRelease: () => {
-        pan.flattenOffset(); // Xóa offset khi người dùng thả biểu tượng
+        pan.flattenOffset(); 
       },
     })
   ).current;
-
-  // Xử lý khi nhấn vào biểu tượng chatbot
-  const handleChatbotPress = () => {
-    navigation.navigate('ChatBotScreen');
-  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Find the best coffee for you</Text>
-        <TouchableOpacity onPress={handlePressUser}>
-          {/* Hiển thị hình đại diện (avatar) */}
-          <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+        <Text style={styles.title}>☕ FIND THE BEST COFFEE</Text>
+        <TouchableOpacity>
+          <Image
+            source={{
+              uri: 'https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png',
+            }}
+            style={styles.avatar}
+          />
         </TouchableOpacity>
+        {/* <Text>Xin ch</Text> */}
       </View>
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <Icon name="search" size={20} color="#fff" style={styles.searchIcon} />
+        <Icon name="search" size={20} color="#0f4359" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Find Your Coffee..."
-          placeholderTextColor="#999"
+          placeholderTextColor='#0f4359'
         />
       </View>
 
       {/* Categories */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryContainer}>
         {categories.map((category, index) => (
-          <TouchableOpacity key={index} onPress={() => setSelectedCategory(category)}>
+          <TouchableOpacity key={index} style={styles.categoryButton} onPress={() => setSelectedCategory(category)}>
             <Text style={[styles.categoryText, selectedCategory === category && styles.categoryTextSelected]}>
               {category}
             </Text>
@@ -118,26 +114,11 @@ const HomeScreen = () => {
         ))}
       </ScrollView>
 
-      {/* Banner tự động cuộn */}
-      <ScrollView
-        ref={scrollViewRef}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
-        )}
-        style={styles.banner}
-      >
-        {bannerImages.map((image, index) => (
-          <Image key={index} source={{ uri: image }} style={styles.bannerImage} />
-        ))}
-      </ScrollView>
+      {/* Banner component */}
+      <Banner images={bannerImages} />
 
       {/* Best Seller */}
-      <Text style={styles.sectionTitle}>Món ngon phải thử</Text>
+      <Text style={styles.sectionTitle}>BEST SELLER</Text>
       <FlatList
         horizontal
         data={coffeeProducts.filter(product => product.name.toLowerCase().includes('cappuccino'))}
@@ -152,15 +133,18 @@ const HomeScreen = () => {
                 <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
               </View>
               <TouchableOpacity style={styles.addButton}>
-                <Icon name="plus" size={16} color="#fff" />
+                <Icon name="plus" size={12} color="#0f4359" />
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
         )}
       />
+
+{/* Đường kẻ ngang */}
+<View style={styles.separator} />
 
       {/* Coffee List */}
-      <Text style={styles.sectionTitle}>Coffee Drinks</Text>
+      <Text style={styles.sectionTitle}>COFFEE DRINKS</Text>
       <FlatList
         horizontal
         data={coffeeProducts.filter(product => product.name.toLowerCase().includes('cappuccino'))}
@@ -175,15 +159,18 @@ const HomeScreen = () => {
                 <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
               </View>
               <TouchableOpacity style={styles.addButton}>
-                <Icon name="plus" size={16} color="#fff" />
+                <Icon name="plus" size={12} color="#0f4359" />
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
         )}
       />
 
+{/* Đường kẻ ngang */}
+<View style={styles.separator} />
+
       {/* Coffee Beans Section */}
-      <Text style={styles.sectionTitle}>Coffee Beans</Text>
+      <Text style={styles.sectionTitle}>COFFEE BEANS</Text>
       <FlatList
         horizontal
         data={coffeeProducts.filter(product => product.name.toLowerCase().includes('beans'))}
@@ -198,41 +185,35 @@ const HomeScreen = () => {
                 <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
               </View>
               <TouchableOpacity style={styles.addButton}>
-                <Icon name="plus" size={16} color="#fff" />
+                <Icon name="plus" size={12} color="#0f4359" />
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
         )}
       />
-
-      {/* Animated View cho biểu tượng chatbot */}
-      <Animated.View
-        {...panResponder.panHandlers}
-        style={[pan.getLayout(), styles.chatbotButton, { zIndex: 9999 }]} // ZIndex giúp biểu tượng chatbot nằm trên cùng
-      >
-        <Icon name="comments" size={40} color="#fff" onPress={handleChatbotPress} />
-      </Animated.View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1c1c1e',
-    paddingHorizontal: 20,
     flex: 1,
+    backgroundColor: '#f4f4f4', // Màu nền tông nâu nhạt
+    paddingHorizontal: 15,
+    // paddingBottom: 1000,
+    marginBottom: 100,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 50,
+    marginBottom: 10,
   },
   title: {
-    color: '#fff',
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: 'bold',
-    flex: 1,
+    color:  primaryColor, 
   },
   avatar: {
     width: 40,
@@ -241,95 +222,96 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    backgroundColor: '#333',
-    borderRadius: 10,
-    marginTop: 20,
-    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    paddingHorizontal: 15,
     alignItems: 'center',
+    marginBottom: 20,
+    elevation: 3,
   },
   searchIcon: {
     marginRight: 10,
   },
   searchInput: {
     flex: 1,
-    color: '#fff',
+    color: '#333',
     height: 40,
   },
   categoryContainer: {
     flexDirection: 'row',
-    marginTop: 20,
+    marginTop: 10,
+  },
+  categoryButton: {
+    backgroundColor: primaryColor,
+    padding: 10,
+    borderRadius: 20,
+    marginRight: 10,
   },
   categoryText: {
-    color: '#999',
+    color: 'white',
     fontSize: 16,
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
+    // fontWeight: '100'
   },
   categoryTextSelected: {
-    color: '#fff',
-    borderBottomWidth: 2,
-    borderBottomColor: '#ff7f50',
+    color: secondaryColor,
+
   },
   sectionTitle: {
-    color: '#fff',
-    fontSize: 22,
-    marginVertical: 20,
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: primaryColor,
+    marginBottom: 15,
+    // marginTop: 15,
   },
   card: {
-    backgroundColor: '#333',
-    borderRadius: 10,
-    marginRight: 20,
-    width: 150,
+ backgroundColor: '#fff',
+    borderRadius: 15,
     padding: 10,
-    position: 'relative',
+    marginRight: 15,
+    width: 150,
+    elevation: 3,
   },
   productImage: {
     width: '100%',
     height: 100,
     borderRadius: 10,
+    marginBottom: 10,
   },
   productInfo: {
     marginTop: 10,
   },
   productName: {
-    color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
+    color: primaryColor,
   },
   productDescription: {
-    color: '#999',
     fontSize: 12,
+    color: primaryColor,
+    marginBottom: 5,
   },
   productPrice: {
-    color: '#fff',
     fontSize: 14,
-    marginTop: 5,
+    fontWeight: '600',
+    color: primaryColor,
   },
   addButton: {
     position: 'absolute',
-    right: 10,
-    bottom: 10,
-    backgroundColor: '#ff7f50',
-    borderRadius: 20,
+    right: 8,
+    bottom: 8,
+    backgroundColor: 'white',
+    borderRadius: 180,
     padding: 8,
+    borderWidth: 1, // Độ dày của viền
+    borderColor: primaryColor,
   },
-  chatbotButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#007BFF',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    position: 'absolute',
-    bottom: 50,
-    right: 20,
-  },
-  banner: {
-    height: 200,
-    marginBottom: 20,
-  },
-  bannerImage: {
-    width: width, // Lấy chiều rộng màn hình cho hình ảnh
-    height: '100%',
-    resizeMode: 'cover',
+  separator: {
+    borderBottomWidth: 1,  // Độ dày của đường kẻ
+    borderBottomColor: '#ddd',  // Màu của đường kẻ
+    marginVertical: 25,  // Khoảng cách trên và dưới đường kẻ
+    marginRight:10,
+    marginLeft:10,
   },
 });
 

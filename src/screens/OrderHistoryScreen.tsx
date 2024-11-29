@@ -95,8 +95,9 @@ const OrderHistoryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1c1c1e',
+    backgroundColor: 'white',
     paddingHorizontal: 20,
+    marginBottom: 80,
   },
   header: {
     flexDirection: 'row',

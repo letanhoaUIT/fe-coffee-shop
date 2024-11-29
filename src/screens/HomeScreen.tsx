@@ -5,15 +5,13 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/types'; // Nhớ import kiểu RootStackParamList
 import Banner from '../components/Home/Banner';
-import CoffeeItem from '../components/Home/CoffeeItem';
-
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScn'>;
 
 const { width, height } = Dimensions.get('window'); // Lấy chiều rộng và chiều cao màn hình
 
 // Màu sắc chủ đạo theo hình ảnh mẫu
-const backgroundColor = '#white'; // Màu nền sáng
+const backgroundColor = 'white'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 const secondaryColor = '#8d6e52'; // Màu phụ đất
 
@@ -35,10 +33,10 @@ const HomeScreen = () => {
 ];
 
 const coffeeProducts = [
-  { id: 1, name: 'Cappuccino', description: 'With Steamed Milk', price: 4.20, rating: 4.5, image: 'https://example.com/cappuccino1.jpg' },
-  { id: 2, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://example.com/cappuccino2.jpg' },
-  { id: 3, name: 'Robusta Beans', description: 'Medium Roasted', price: 5.00, rating: 4.0, image: 'https://example.com/beans1.jpg' },
-  { id: 4, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://example.com/beans2.jpg' },
+  { id: 1, name: 'Cappuccino', description: 'With Steamed Milk', price: 4.20, rating: 4.5, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+  { id: 2, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+  { id: 3, name: 'Robusta Beans', description: 'Medium Roasted', price: 5.00, rating: 4.0, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+  { id: 4, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
   { id: 5, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://example.com/beans2.jpg' },
 ];
   const handlePressProduct = (product: any) => {
@@ -53,29 +51,6 @@ const coffeeProducts = [
     navigation.navigate('UserProfile'); // Điều hướng đến màn hình UserProfile
   };
 
-
-  // Sử dụng Animated.Value để theo dõi vị trí của biểu tượng
-  const pan = useRef(new Animated.ValueXY()).current;
-
-  // Tạo PanResponder để xử lý các sự kiện kéo thả
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true, 
-      onPanResponderGrant: () => {
-        pan.setOffset({
-          x: pan.x._value,
-          y: pan.y._value,
-        });
-      },
-      onPanResponderMove: Animated.event(
-        [null, { dx: pan.x, dy: pan.y }],
-        { useNativeDriver: false }
-      ),
-      onPanResponderRelease: () => {
-        pan.flattenOffset(); 
-      },
-    })
-  ).current;
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -265,21 +240,24 @@ const styles = StyleSheet.create({
     // marginTop: 15,
   },
   card: {
- backgroundColor: '#fff',
+    backgroundColor: '#fff',
     borderRadius: 15,
-    padding: 10,
+    // padding: 10,
     marginRight: 15,
-    width: 150,
+    width: 175,
+    height: 260,
     elevation: 3,
   },
   productImage: {
     width: '100%',
-    height: 100,
-    borderRadius: 10,
+    height: '65%',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     marginBottom: 10,
   },
   productInfo: {
     marginTop: 10,
+    marginLeft: 10,
   },
   productName: {
     fontSize: 16,

@@ -1,31 +1,31 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, FlatList, StyleSheet, Image, Animated, Dimensions } from 'react-native';
+import { View, FlatList, StyleSheet, Image, Dimensions, Animated, Text } from 'react-native';
 
-const { width } = Dimensions.get('window');  // Chiều rộng màn hình
+const { width } = Dimensions.get('window'); // Chiều rộng màn hình
 
-// Component nhận dữ liệu images từ props
 const Banner = ({ images }: { images: string[] }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);  // Lưu chỉ số của ảnh hiện tại
-  const flatListRef = useRef<FlatList>(null);  // Tham chiếu đến FlatList
+  const [currentIndex, setCurrentIndex] = useState(0); // Lưu chỉ số của ảnh hiện tại
+  const flatListRef = useRef<FlatList>(null); // Tham chiếu đến FlatList
 
   useEffect(() => {
     // Tự động chuyển sang ảnh tiếp theo sau mỗi 3 giây
     const interval = setInterval(() => {
-      setCurrentIndex(prevIndex => (prevIndex + 1) % images.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 3000);
 
-    return () => clearInterval(interval);  // Dọn dẹp interval khi component unmount
+    return () => clearInterval(interval); // Dọn dẹp interval khi component unmount
   }, [images.length]);
 
-  // Khi currentIndex thay đổi, cuộn đến ảnh mới
   useEffect(() => {
+    // Khi currentIndex thay đổi, cuộn đến ảnh mới
     if (flatListRef.current) {
       flatListRef.current.scrollToIndex({ index: currentIndex, animated: true });
     }
-  }, [currentIndex]);  // Chạy lại khi currentIndex thay đổi
+  }, [currentIndex]);
 
   return (
     <View style={styles.bannerContainer}>
+      {/* Banner */}
       <FlatList
         ref={flatListRef}
         data={images}
@@ -37,8 +37,22 @@ const Banner = ({ images }: { images: string[] }) => {
         )}
         keyExtractor={(item, index) => index.toString()}
         showsHorizontalScrollIndicator={false}
-        pagingEnabled  // Bật tính năng cuộn từng ảnh một
+        pagingEnabled
       />
+
+      {/* Dots Indicator */}
+      <View style={styles.dotContainer}>
+        {images.map((_, index) => (
+          <Animated.View
+            key={index}
+            style={[
+              styles.dot,
+              { opacity: currentIndex === index ? 1 : 0.5 }, // Đổi độ mờ dựa trên trạng thái
+              currentIndex === index && styles.activeDot, // Hiện dot đậm màu hơn nếu được chọn
+            ]}
+          />
+        ))}
+      </View>
     </View>
   );
 };
@@ -46,18 +60,36 @@ const Banner = ({ images }: { images: string[] }) => {
 const styles = StyleSheet.create({
   bannerContainer: {
     width,
-    height: 230, 
+    height: 230,
     marginVertical: 12,
   },
   imageContainer: {
     width,
     justifyContent: 'center',
-    // alignItems: 'center',
   },
   image: {
-    width: width - 30, 
-    height: 210,  // Chiều cao ảnh
-    borderRadius: 10, 
+    width: width - 30,
+    height: 210,
+    borderRadius: 10,
+  },
+  dotContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 8,
+    position: 'absolute',
+    bottom: 15, // Đặt vị trí dưới cùng
+    left: 0,
+    right: 0,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 4,
+    backgroundColor: '#888', // Màu xám nhạt
+    marginHorizontal: 8,
+  },
+  activeDot: {
+    backgroundColor: 'white', // Màu chủ đạo cho dot đang chọn
   },
 });
 

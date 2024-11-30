@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../navigation/types'; // Import RootStackParamList từ file types.ts
+// import { RootStackParamList } from '../navigation/types';
 
 // Khai báo kiểu cho props của màn hình
 type CoffeeDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CoffeeDetail'>;
@@ -24,7 +24,7 @@ const CoffeeDetailScreen = ({ route, navigation }: Props) => {
   const [isFavorited, setIsFavorited] = useState(false); 
 
   const toggleFavorite = () => {
-    setIsFavorited(!isFavorited); // Đảo ngược trạng thái yêu thích
+    setIsFavorited(!isFavorited); 
   };
 
   const goBackToHome = () => {

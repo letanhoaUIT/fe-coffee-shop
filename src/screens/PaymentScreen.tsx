@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const PaymentScreen = ({ route }) => {
+const PaymentScreen = ({ route, navigation }) => {
   const { totalPrice } = route.params; // Lấy tổng giá từ CartScreen
   const [selectedMethod, setSelectedMethod] = useState('Credit Card');
 
@@ -15,7 +15,9 @@ const PaymentScreen = ({ route }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Icon name="arrow-left" size={24} color="#fff" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.title}>Payment</Text>
       </View>
 
@@ -98,12 +100,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 40,
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  backButton: {
+    position: 'absolute', // Định vị mũi tên ở bên trái
+    left: 10, // Căn lề trái
   },
   title: {
     color: '#fff',
     fontSize: 28,
     fontWeight: 'bold',
-    marginLeft: 20,
+    textAlign: 'center', // Đảm bảo chữ ở giữa
   },
   cardContainer: {
     backgroundColor: '#333',

@@ -3,15 +3,19 @@ import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
+const backgroundColor = '#f4f4f4'; // Màu nền sáng
+const primaryColor = '#0f4359'; // Màu chủ xanh dương
+const secondaryColor = '#8d6e52'; // Màu phụ đất
+
 const initialCartItems = [
   {
     id: 1,
     name: 'Cappuccino',
     description: 'With Steamed Milk',
     price: 4.20,
-    image: 'https://example.com/cappuccino1.jpg',
+    image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
     sizes: ['S', 'M', 'L'],
-    selectedSize: 'S',
+    selectedSize: 'M',
     quantity: 1,
   },
   {
@@ -19,13 +23,53 @@ const initialCartItems = [
     name: 'Robusta Beans',
     description: 'From Africa',
     price: 6.20,
-    image: 'https://example.com/beans1.jpg',
+    image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
     sizes: ['250gm', '500gm', '1kg'],
-    selectedSize: '250gm',
+    selectedSize: '500gm',
     quantity: 1,
   },
   {
     id: 3,
+    name: 'Liberica Coffee Beans',
+    description: 'Medium Roasted',
+    price: 4.20,
+    image: 'https://example.com/beans2.jpg',
+    sizes: ['250gm', '500gm', '1kg'],
+    selectedSize: '250gm',
+    quantity: 1,
+  },
+    {
+    id: 4,
+    name: 'Liberica Coffee Beans',
+    description: 'Medium Roasted',
+    price: 4.20,
+    image: 'https://example.com/beans2.jpg',
+    sizes: ['250gm', '500gm', '1kg'],
+    selectedSize: '250gm',
+    quantity: 1,
+  },
+    {
+    id: 5,
+    name: 'Liberica Coffee Beans',
+    description: 'Medium Roasted',
+    price: 4.20,
+    image: 'https://example.com/beans2.jpg',
+    sizes: ['250gm', '500gm', '1kg'],
+    selectedSize: '250gm',
+    quantity: 1,
+  },
+    {
+    id: 6,
+    name: 'Liberica Coffee Beans',
+    description: 'Medium Roasted',
+    price: 4.20,
+    image: 'https://example.com/beans2.jpg',
+    sizes: ['250gm', '500gm', '1kg'],
+    selectedSize: '250gm',
+    quantity: 1,
+  },
+    {
+    id: 7,
     name: 'Liberica Coffee Beans',
     description: 'Medium Roasted',
     price: 4.20,
@@ -60,17 +104,19 @@ const CartScreen = () => {
     setCartItems(updatedItems);
   };
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
+  const totalPrice = cartItems
+    .reduce((acc, item) => acc + item.price * item.quantity, 0)
+    .toFixed(2);
 
   const handlePay = () => {
-    navigation.navigate('Payment', { totalPrice: parseFloat(totalPrice) }); // Điều hướng đến PaymentScreen
+    navigation.navigate('Payment', { totalPrice: parseFloat(totalPrice) });
   };
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Cart</Text>
-        <Icon name="user" size={30} color="#fff" />
       </View>
 
       {/* Cart Items */}
@@ -111,11 +157,17 @@ const CartScreen = () => {
               <View style={styles.priceQuantityContainer}>
                 <Text style={styles.price}>${item.price.toFixed(2)}</Text>
                 <View style={styles.quantityContainer}>
-                  <TouchableOpacity onPress={() => handleQuantityChange(item.id, -1)}>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => handleQuantityChange(item.id, -1)}
+                  >
                     <Icon name="minus" size={16} color="#fff" />
                   </TouchableOpacity>
                   <Text style={styles.quantityText}>{item.quantity}</Text>
-                  <TouchableOpacity onPress={() => handleQuantityChange(item.id, 1)}>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => handleQuantityChange(item.id, 1)}
+                  >
                     <Icon name="plus" size={16} color="#fff" />
                   </TouchableOpacity>
                 </View>
@@ -125,7 +177,7 @@ const CartScreen = () => {
         )}
       />
 
-      {/* Total Price and Pay Button */}
+      {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.totalPrice}>Total Price: ${totalPrice}</Text>
         <TouchableOpacity style={styles.payButton} onPress={handlePay}>
@@ -139,43 +191,48 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1c1c1e',
+    backgroundColor: 'white' ,
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 40,
+    marginBottom: 15,
   },
   title: {
-    color: '#fff',
+    color: primaryColor,
     fontSize: 28,
     fontWeight: 'bold',
   },
   cartItem: {
     flexDirection: 'row',
-    backgroundColor: '#333',
+    backgroundColor,
     borderRadius: 10,
-    padding: 16,
+    // padding: 16,
     marginBottom: 16,
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
+    width: '30%',
+    // height: '',
+    // borderRadius: 10,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
   },
   infoContainer: {
     flex: 1,
     marginLeft: 16,
   },
   productName: {
-    color: '#fff',
-    fontSize: 18,
+    color: primaryColor,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   description: {
-    color: '#aaa',
+    color: primaryColor,
+    fontSize: 12,
     marginVertical: 4,
   },
   sizeContainer: {
@@ -183,17 +240,18 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   sizeButton: {
-    backgroundColor: '#444',
+    backgroundColor: primaryColor,
     borderRadius: 4,
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 6,
     marginRight: 8,
   },
   selectedSizeButton: {
-    backgroundColor: '#ff7f50',
+    backgroundColor: secondaryColor,
   },
   sizeText: {
     color: '#fff',
+    fontSize: 12,
   },
   selectedSizeText: {
     fontWeight: 'bold',
@@ -205,28 +263,32 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   price: {
-    color: '#fff',
+    color: primaryColor,
     fontSize: 16,
     fontWeight: 'bold',
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#444',
+    backgroundColor: primaryColor,
     borderRadius: 4,
-    paddingHorizontal: 8,
+  },
+  quantityButton: {
+    padding: 6,
   },
   quantityText: {
-    color: '#fff',
+    color: 'white',
+    fontSize: 14,
     marginHorizontal: 8,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: '#444',
+    borderTopColor: '#333',
+    paddingVertical: 16,
+    marginBottom: 80,
   },
   totalPrice: {
     color: '#fff',
@@ -234,7 +296,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   payButton: {
-    backgroundColor: '#ff7f50',
+    backgroundColor: '#FF5733',
     borderRadius: 8,
     paddingHorizontal: 24,
     paddingVertical: 12,
@@ -243,6 +305,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+    backButton: {
+    position: 'absolute',
+    zIndex: 1,
+    padding: 20,
+    top: 30,
+    left: 10,
+    fontSize: 10,
   },
 });
 

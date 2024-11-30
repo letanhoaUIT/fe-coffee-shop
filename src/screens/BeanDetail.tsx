@@ -8,10 +8,10 @@ const secondaryColor = '#8d6e52'; // Màu phụ đất
 
 const BeanDetailScreen = ({ route, navigation }) => {
   const { product } = route.params; // Lấy dữ liệu sản phẩm từ params
-  const [selectedSize, setSelectedSize] = useState('250gm'); 
- const [isFavorited, setIsFavorited] = useState(false);
+  const [selectedSize, setSelectedSize] = useState('250gm');
+  const [isFavorited, setIsFavorited] = useState(false);
 
-   const toggleFavorite = () => {
+  const toggleFavorite = () => {
     setIsFavorited(!isFavorited);
   };
   const addToCart = () => {
@@ -19,12 +19,24 @@ const BeanDetailScreen = ({ route, navigation }) => {
     console.log(`Added ${product.name} (${selectedSize}) to cart.`);
   };
 
+  const handlePressCart = () => {
+    navigation.navigate('Cart');
+  };
+
   return (
     <View style={styles.container}>
-      {/* Nút quay lại */}
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Icon name="arrow-left" size={24} color="#fff" />
-      </TouchableOpacity>
+      <View style={styles.header}>
+        {/* Nút quay lại */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Nút giỏ hàng */}
+        <TouchableOpacity onPress={handlePressCart} style={styles.cartButton}>
+          <Icon name="shopping-cart" size={24} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
 
       {/* Ảnh sản phẩm */}
       <Image source={{ uri: product.image }} style={styles.image} />
@@ -91,16 +103,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f4f4',
     // padding: 16,
   },
+  header: {
+    position: 'absolute',
+    top: 40,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    zIndex: 10,
+  },
+  cartButton: {
+    padding: 8,
+  },
   bottom: {
     marginHorizontal: 20,
   },
   backButton: {
-    position: 'absolute',
-    zIndex: 1,
-    padding: 20,
-    top: 30,
-    left: 10,
-    fontSize: 10,
+    padding: 8,
   },
   image: {
     width: '100%',
@@ -209,7 +230,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-    favoriteButton: {
+  favoriteButton: {
     position: 'absolute',
     top: 10,
     right: 10,

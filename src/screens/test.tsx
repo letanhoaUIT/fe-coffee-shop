@@ -10,6 +10,7 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScn
 
 const { width, height } = Dimensions.get('window'); // Lấy chiều rộng và chiều cao màn hình
 
+// Màu sắc chủ đạo theo hình ảnh mẫu
 const backgroundColor = 'white'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 const secondaryColor = '#8d6e52'; // Màu phụ đất
@@ -55,16 +56,17 @@ const coffeeProducts = [
 
  // Render item trong FlatList
   const renderItem = ({ item, index }: { item: any, index: number }) => {
+    // Cấu hình input range cho hiệu ứng phóng to
     const inputRange = [
-      (index - 1) * (width / 3), 
-      index * (width / 3), 
-      (index + 1) * (width / 3)
+      (index - 1) * (width / 4), 
+      index * (width / 4), 
+      (index + 1) * (width / 4)
     ];
 
     // Thay đổi scale dựa trên vị trí cuộn
     const scale = scrollX.interpolate({
       inputRange,
-      outputRange: [0.9, 1.1, 0.9],
+      outputRange: [0.9, 1.2, 0.9], // Phóng to khi cuộn tới giữa
       extrapolate: 'clamp'
     });
 
@@ -138,7 +140,7 @@ const coffeeProducts = [
         )}
         scrollEventThrottle={16} // Cải thiện hiệu suất
       />
-      
+
 {/* Đường kẻ ngang */}
 <View style={styles.separator} />
 
@@ -199,6 +201,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f4f4f4', // Màu nền tông nâu nhạt
     paddingHorizontal: 15,
+    // paddingBottom: 1000,
     marginBottom: 100,
   },
   header: {
@@ -226,7 +229,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     elevation: 3,
-    borderWidth: 0.25,
+    borderWidth: 0.25, // Độ dày viền
     borderColor: primaryColor,
   },
   searchIcon: {
@@ -267,11 +270,11 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     borderRadius: 15,
+    // padding: 10,
     marginRight: 15,
     width: 175,
     height: 260,
     elevation: 3,
-    overflow: 'hidden',
   },
   productImage: {
     width: '100%',
@@ -302,17 +305,17 @@ const styles = StyleSheet.create({
   addButton: {
     position: 'absolute',
     right: 8,
-    bottom: 15,
+    bottom: 8,
     backgroundColor: 'white',
     borderRadius: 180,
-    padding: 6,
+    padding: 8,
     borderWidth: 1, // Độ dày của viền
     borderColor: primaryColor,
   },
   separator: {
-    borderBottomWidth: 1,  
-    borderBottomColor: '#ddd',  
-    marginVertical: 25,  
+    borderBottomWidth: 1,  // Độ dày của đường kẻ
+    borderBottomColor: '#ddd',  // Màu của đường kẻ
+    marginVertical: 25,  // Khoảng cách trên và dưới đường kẻ
     marginRight:10,
     marginLeft:10,
   },

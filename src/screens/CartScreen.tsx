@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { Alert } from 'react-native';
 
 const backgroundColor = '#f4f4f4'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
@@ -38,7 +39,7 @@ const initialCartItems = [
     selectedSize: '250gm',
     quantity: 1,
   },
-    {
+  {
     id: 4,
     name: 'Liberica Coffee Beans',
     description: 'Medium Roasted',
@@ -48,7 +49,7 @@ const initialCartItems = [
     selectedSize: '250gm',
     quantity: 1,
   },
-    {
+  {
     id: 5,
     name: 'Liberica Coffee Beans',
     description: 'Medium Roasted',
@@ -58,7 +59,7 @@ const initialCartItems = [
     selectedSize: '250gm',
     quantity: 1,
   },
-    {
+  {
     id: 6,
     name: 'Liberica Coffee Beans',
     description: 'Medium Roasted',
@@ -68,7 +69,7 @@ const initialCartItems = [
     selectedSize: '250gm',
     quantity: 1,
   },
-    {
+  {
     id: 7,
     name: 'Liberica Coffee Beans',
     description: 'Medium Roasted',
@@ -80,6 +81,7 @@ const initialCartItems = [
   },
 ];
 
+
 const CartScreen = () => {
   const [cartItems, setCartItems] = useState(initialCartItems);
   const navigation = useNavigation();
@@ -87,7 +89,27 @@ const CartScreen = () => {
   const handleQuantityChange = (id: number, change: number) => {
     const updatedItems = cartItems.map(item => {
       if (item.id === id) {
-        return { ...item, quantity: Math.max(1, item.quantity + change) };
+        const newQuantity = item.quantity + change;
+        // Nếu số lượng trở về 0
+        if (newQuantity < 1) {
+          Alert.alert(
+            'Xác nhận',
+            'Bạn có chắc chắn muốn bỏ sản phẩm này?',
+            [
+              { text: 'Hủy bỏ', style: 'cancel' },
+              {
+                text: 'Đồng ý',
+                onPress: () => {
+                  const filteredItems = cartItems.filter(item => item.id !== id);
+                  setCartItems(filteredItems); // Cập nhật danh sách giỏ hàng
+                },
+              },
+            ],
+            { cancelable: true }
+          );
+          return item; // Không thay đổi sản phẩm ban đầu
+        }
+        return { ...item, quantity: newQuantity };
       }
       return item;
     });
@@ -191,13 +213,13 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white' ,
+    backgroundColor: 'white',
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 15,
@@ -206,6 +228,7 @@ const styles = StyleSheet.create({
     color: primaryColor,
     fontSize: 28,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   cartItem: {
     flexDirection: 'row',
@@ -291,12 +314,12 @@ const styles = StyleSheet.create({
     marginBottom: 80,
   },
   totalPrice: {
-    color: '#fff',
+    color: primaryColor,
     fontSize: 18,
     fontWeight: 'bold',
   },
   payButton: {
-    backgroundColor: '#FF5733',
+    backgroundColor: secondaryColor,
     borderRadius: 8,
     paddingHorizontal: 24,
     paddingVertical: 12,
@@ -306,7 +329,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-    backButton: {
+  backButton: {
     position: 'absolute',
     zIndex: 1,
     padding: 20,

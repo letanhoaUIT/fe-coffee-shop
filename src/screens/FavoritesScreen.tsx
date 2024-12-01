@@ -11,32 +11,65 @@ const favoriteItems = [
     price: 4.20,
     rating: 4.5,
     ratingCount: 6879,
-    image: 'https://example.com/cappuccino1.jpg',
+    image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
+    tags: ['Coffee', 'Milk'],
+    roastType: 'Medium Roasted',
+  },
+    {
+    id: 2,
+    name: 'Cappuccino',
+    description: 'With Steamed Milk',
+    price: 4.20,
+    rating: 4.5,
+    ratingCount: 6879,
+    image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
+    tags: ['Coffee', 'Milk'],
+    roastType: 'Medium Roasted',
+  },
+    {
+    id: 3,
+    name: 'Cappuccino',
+    description: 'With Steamed Milk',
+    price: 4.20,
+    rating: 4.5,
+    ratingCount: 6879,
+    image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
     tags: ['Coffee', 'Milk'],
     roastType: 'Medium Roasted',
   },
   // Thêm nhiều sản phẩm yêu thích khác nếu cần
 ];
 
+const backgroundColor = 'white'; // Màu nền sáng
+const primaryColor = '#0f4359'; // Màu chủ xanh dương
+const secondaryColor = '#8d6e52'; // Màu phụ đất
+
 const FavoritesScreen = () => {
   const navigation = useNavigation();
-
+  const [favorites, setFavorites] = useState(favoriteItems);
   const handlePressFavorite = (item: any) => {
     // Điều hướng đến trang chi tiết của sản phẩm
     navigation.navigate('CoffeeDetail', { product: item });
   };
 
+  const removeFavorite = (id: number, name: string) => {
+    // Xóa sản phẩm khỏi danh sách
+    setFavorites(prevFavorites => prevFavorites.filter(item => item.id !== id));
+
+    // Hiển thị thông báo
+    alert(`Đã bỏ chọn ${name} ra khỏi danh sách yêu thích`);
+  };
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Favorites</Text>
-        <Icon name="user" size={30} color="#fff" />
+        {/* <Icon name="user" size={30} color="#0f4359" /> */}
       </View>
 
       {/* Favorite Items */}
       <FlatList
-        data={favoriteItems}
+        data={favorites} // Sử dụng state để hiển thị danh sách
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handlePressFavorite(item)}>
@@ -45,7 +78,13 @@ const FavoritesScreen = () => {
               <View style={styles.infoContainer}>
                 <View style={styles.topSection}>
                   <Text style={styles.productName}>{item.name}</Text>
-                  <Icon name="heart" size={24} color="red" />
+                  <Icon
+                    name="heart"
+                    size={24}
+                    color="red"
+                    padding={10}
+                    onPress={() => removeFavorite(item.id, item.name)}
+                  />
                 </View>
                 <Text style={styles.description}>{item.description}</Text>
                 <View style={styles.tagsContainer}>
@@ -66,6 +105,7 @@ const FavoritesScreen = () => {
           </TouchableOpacity>
         )}
       />
+
     </View>
   );
 };
@@ -73,31 +113,34 @@ const FavoritesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1c1c1e',
+    backgroundColor,
     paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    // justifyContent: 'space-between',
+    alignItems: 'center', // Căn giữa theo chiều dọc
+    justifyContent: 'center', // Căn giữa theo chiều ngang
     marginTop: 40,
   },
   title: {
-    color: '#fff',
+    color: primaryColor,
     fontSize: 28,
     fontWeight: 'bold',
   },
   favoriteCard: {
-    backgroundColor: '#333',
+    backgroundColor: '#f4f4f4',
     borderRadius: 10,
     marginVertical: 10,
-    padding: 16,
+    // padding: 16,
     flexDirection: 'row',
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
+    width: '35%',
+    // height: 'auto',
+    // borderRadius: 10,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
   },
   infoContainer: {
     marginLeft: 16,
@@ -108,13 +151,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   productName: {
-    color: '#fff',
+    color: primaryColor,
     fontSize: 18,
     fontWeight: 'bold',
+    marginTop: 10,
   },
   description: {
-    color: '#aaa',
-    marginVertical: 8,
+    color: primaryColor,
+    marginBottom: 8,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -133,7 +177,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   roastType: {
-    color: '#fff',
+    color: primaryColor,
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -147,13 +191,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   ratingCount: {
-    color: '#aaa',
+    color: primaryColor,
     marginLeft: 8,
   },
   price: {
-    color: '#fff',
+    color: primaryColor,
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 

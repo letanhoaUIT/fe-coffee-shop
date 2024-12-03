@@ -13,6 +13,7 @@
     "@react-native-community/checkbox": "^0.5.17",
     "@react-native-firebase/app": "^21.0.0",
     "@react-native-firebase/messaging": "^21.0.0",
+    "@react-native-voice/voice": "^3.2.4",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
@@ -20,6 +21,7 @@
     "axios": "^1.7.7",
     "expo": "^52.0.11",
     "expo-checkbox": "~4.0.0",
+    "expo-file-system": "~18.0.4",
     "expo-image-picker": "~16.0.3",
     "expo-location": "~18.0.2",
     "expo-status-bar": "~2.0.0",
@@ -35,13 +37,13 @@
     "react-native-safe-area-context": "^4.14.0",
     "react-native-screens": "~4.1.0",
     "react-native-vector-icons": "^10.2.0",
+    "react-native-voice": "^0.3.0",
     "react-native-webview": "13.12.2",
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4",
     "react-redux": "^9.1.2",
     "tailwind-rn": "^4.2.0",
-    "tailwindcss-react-native": "^1.7.10",
-    "expo-file-system": "~18.0.4"
+    "tailwindcss-react-native": "^1.7.10"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -1,35 +1,42 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
-// import { RootStackParamList } from '../navigation/types';
-
-// Khai báo kiểu cho props của màn hình
-type CoffeeDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CoffeeDetail'>;
-type CoffeeDetailScreenRouteProp = RouteProp<RootStackParamList, 'CoffeeDetail'>;
-
-type Props = {
-  navigation: CoffeeDetailScreenNavigationProp;
-  route: CoffeeDetailScreenRouteProp;
-};
+import { useCart } from './context/CartContext';
+import { useFavorites } from './context/FavoritesContext';
 
 const backgroundColor = '#f4f4f4'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 const secondaryColor = '#8d6e52'; // Màu phụ đất
 
-const CoffeeDetailScreen = ({ route, navigation }: Props) => {
+const CoffeeDetailScreen = ({ route, navigation }) => {
   const { product } = route.params; // Lấy dữ liệu sản phẩm từ params
-  const [selectedSize, setSelectedSize] = useState('S'); 
-  const [isFavorited, setIsFavorited] = useState(false); 
+  const [selectedSize, setSelectedSize] = useState('S');
 
+  const { addToCart } = useCart();
+  const { addToFavorites, removeFromFavorites, favoriteItems } = useFavorites(); // Lấy từ context Favorites
+
+  const [isFavorited, setIsFavorited] = useState(
+    favoriteItems.some(fav => fav.id === product.id) // Kiểm tra nếu sản phẩm đã có trong danh sách yêu thích
+  );
+  // Hàm toggle yêu thích
   const toggleFavorite = () => {
-    setIsFavorited(!isFavorited); 
+    if (isFavorited) {
+      removeFromFavorites(product.id); // Nếu đã yêu thích, thì bỏ yêu thích
+    } else {
+      addToFavorites(product); // Thêm sản phẩm vào danh sách yêu thích
+    }
+    setIsFavorited(!isFavorited); // Chuyển đổi trạng thái yêu thích
   };
 
   const goBackToHome = () => {
     navigation.navigate('Home');
   };
+
+  const handleAddToCart = () => {
+    addToCart({ ...product, selectedSize, quantity: 1 });
+    navigation.navigate('Cart');
+  };
+
 
   return (
     <View style={styles.container}>
@@ -43,7 +50,7 @@ const CoffeeDetailScreen = ({ route, navigation }: Props) => {
 
       <View style={styles.bottom}>
         {/* Biểu tượng trái tim yêu thích */}
-        <TouchableOpacity style={styles.favoriteButton} onPress={toggleFavorite}>
+        <TouchableOpacity style={styles.favoriteButton} onPress={toggleFavorite} >
           <Icon name={isFavorited ? 'heart' : 'heart-o'} size={30} color={primaryColor} />
         </TouchableOpacity>
 
@@ -81,7 +88,7 @@ const CoffeeDetailScreen = ({ route, navigation }: Props) => {
             <Text style={styles.priceTitle}>Price</Text>
             <Text style={styles.price}>${product.price.toFixed(2)}</Text>
           </View>
-          <TouchableOpacity style={styles.addToCartButton}>
+          <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableOpacity>
         </View>

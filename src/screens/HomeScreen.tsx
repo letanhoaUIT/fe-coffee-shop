@@ -3,7 +3,7 @@ import { View, Text, TextInput, ScrollView, StyleSheet, Image, FlatList, Touchab
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/types'; // Nhớ import kiểu RootStackParamList
+import { RootStackParamList } from '../navigation/types';
 import Banner from '../components/Home/Banner';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScn'>;
@@ -16,31 +16,33 @@ const secondaryColor = '#8d6e52'; // Màu phụ đất
 
 const categories = ['All', 'Cappuccino', 'Espresso', 'Americano', 'Macchiato'];
 
-
+  const coffeeProducts = [
+    { id: 1, name: 'Cappuccino', description: 'With Steamed Milk', price: 4.20, rating: 4.5, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+    { id: 2, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+    { id: 3, name: 'Robusta Beans', description: 'Medium Roasted', price: 5.00, rating: 4.0, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+    { id: 4, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+    { id: 5, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://example.com/beans2.jpg' },
+    { id: 6, name: ' m Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+    { id: 7, name: ' l Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+    { id: 8, name: 'x Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+    { id: 9, name: 'x beans', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
+  ];
 const HomeScreen = () => {
-  const [avatarUrl, setAvatarUrl] = useState('https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const navigation = useNavigation<HomeScreenNavigationProp>(); 
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const scrollX = useRef(new Animated.Value(0)).current;
-  const scrollViewRef = useRef<ScrollView | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // const scrollViewRef = useRef<ScrollView | null>(null);
+  // const [currentIndex, setCurrentIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState(coffeeProducts);
 
   const bannerImages = [
-  'https://img.buzzfeed.com/buzzfeed-static/static/2024-08/30/22/asset/673a78601a5a/sub-buzz-1848-1725055325-1.jpg',
-  'https://img.lovepik.com/photo/20211119/small/lovepik-delicious-coffee-and-coffee-beans-picture_500217119.jpg',
-  'https://img.lovepik.com/photo/48017/7352.jpg_wh300.jpg',
-];
+    'https://img.buzzfeed.com/buzzfeed-static/static/2024-08/30/22/asset/673a78601a5a/sub-buzz-1848-1725055325-1.jpg',
+    'https://img.lovepik.com/photo/20211119/small/lovepik-delicious-coffee-and-coffee-beans-picture_500217119.jpg',
+    'https://img.lovepik.com/photo/48017/7352.jpg_wh300.jpg',
+  ];
 
-const coffeeProducts = [
-  { id: 1, name: 'Cappuccino', description: 'With Steamed Milk', price: 4.20, rating: 4.5, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 2, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 3, name: 'Robusta Beans', description: 'Medium Roasted', price: 5.00, rating: 4.0, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 4, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 5, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://example.com/beans2.jpg' },
-  { id: 6, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-    { id: 7, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-    { id: 8, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-];
+
   const handlePressProduct = (product: any) => {
     navigation.navigate('Bean', { product }); // Điều hướng với tham số product
   };
@@ -53,11 +55,21 @@ const coffeeProducts = [
     navigation.navigate('UserProfile'); // Điều hướng đến màn hình UserProfile
   };
 
- // Render item trong FlatList
+ const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setFilteredProducts(
+      coffeeProducts.filter(product =>
+        product.name.toLowerCase().includes(query.toLowerCase())
+      )
+    );
+  };
+
+
+  // Render item trong FlatList
   const renderItem = ({ item, index }: { item: any, index: number }) => {
     const inputRange = [
-      (index - 1) * (width / 3), 
-      index * (width / 3), 
+      (index - 1) * (width / 3),
+      index * (width / 3),
       (index + 1) * (width / 3)
     ];
 
@@ -68,6 +80,7 @@ const coffeeProducts = [
       extrapolate: 'clamp'
     });
 
+    
     return (
       <TouchableOpacity onPress={() => handlePressCoffee(item)}>
         <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
@@ -84,6 +97,9 @@ const coffeeProducts = [
       </TouchableOpacity>
     );
   };
+
+  
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
@@ -100,14 +116,20 @@ const coffeeProducts = [
         {/* <Text>Xin ch</Text> */}
       </View>
 
-      {/* Search Bar */}
+      {/* Thanh tìm kiếm */}
       <View style={styles.searchContainer}>
         <Icon name="search" size={20} color="#0f4359" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={handleSearch}
           placeholder="Find Your Coffee..."
-          placeholderTextColor='#0f4359'
+          placeholderTextColor="#0f4359"
         />
+        {/* Biểu tượng giọng nói */}
+        <TouchableOpacity>
+          <Icon name="microphone" size={20} color="#0f4359"  />
+        </TouchableOpacity>
       </View>
 
       {/* Categories */}
@@ -126,9 +148,9 @@ const coffeeProducts = [
 
       {/* Best Seller */}
       <Text style={styles.sectionTitle}>BEST SELLER</Text>
-      <Animated.FlatList
+       <Animated.FlatList
         horizontal
-        data={coffeeProducts.filter(product => product.name.toLowerCase().includes('cappuccino'))}
+        data={filteredProducts.filter(product => product.name.toLowerCase().includes('cappuccino'))}
         keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
@@ -138,15 +160,15 @@ const coffeeProducts = [
         )}
         scrollEventThrottle={16} // Cải thiện hiệu suất
       />
-      
-{/* Đường kẻ ngang */}
-<View style={styles.separator} />
+
+      {/* Đường kẻ ngang */}
+      <View style={styles.separator} />
 
       {/* Coffee List */}
       <Text style={styles.sectionTitle}>COFFEE DRINKS</Text>
       <FlatList
         horizontal
-        data={coffeeProducts.filter(product => product.name.toLowerCase().includes('cappuccino'))}
+        data={filteredProducts.filter(product => product.name.toLowerCase().includes('cappuccino'))}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handlePressCoffee(item)}>
@@ -165,14 +187,14 @@ const coffeeProducts = [
         )}
       />
 
-{/* Đường kẻ ngang */}
-<View style={styles.separator} />
+      {/* Đường kẻ ngang */}
+      <View style={styles.separator} />
 
       {/* Coffee Beans Section */}
       <Text style={styles.sectionTitle}>COFFEE BEANS</Text>
       <FlatList
         horizontal
-        data={coffeeProducts.filter(product => product.name.toLowerCase().includes('beans'))}
+        data={filteredProducts.filter(product => product.name.toLowerCase().includes('beans'))}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handlePressProduct(item)}>
@@ -211,7 +233,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color:  primaryColor, 
+    color: primaryColor,
   },
   avatar: {
     width: 40,
@@ -310,11 +332,11 @@ const styles = StyleSheet.create({
     borderColor: primaryColor,
   },
   separator: {
-    borderBottomWidth: 1,  
-    borderBottomColor: '#ddd',  
-    marginVertical: 25,  
-    marginRight:10,
-    marginLeft:10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    marginVertical: 25,
+    marginRight: 10,
+    marginLeft: 10,
   },
 });
 

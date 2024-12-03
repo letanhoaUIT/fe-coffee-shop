@@ -1,96 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import { Alert } from 'react-native';
+import { useCart } from './context/CartContext';
 
 const backgroundColor = '#f4f4f4'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 const secondaryColor = '#8d6e52'; // Màu phụ đất
 
-const initialCartItems = [
-  {
-    id: 1,
-    name: 'Cappuccino',
-    description: 'With Steamed Milk',
-    price: 4.20,
-    image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
-    sizes: ['S', 'M', 'L'],
-    selectedSize: 'M',
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: 'Robusta Beans',
-    description: 'From Africa',
-    price: 6.20,
-    image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
-    sizes: ['250gm', '500gm', '1kg'],
-    selectedSize: '500gm',
-    quantity: 1,
-  },
-  {
-    id: 3,
-    name: 'Liberica Coffee Beans',
-    description: 'Medium Roasted',
-    price: 4.20,
-    image: 'https://example.com/beans2.jpg',
-    sizes: ['250gm', '500gm', '1kg'],
-    selectedSize: '250gm',
-    quantity: 1,
-  },
-  {
-    id: 4,
-    name: 'Liberica Coffee Beans',
-    description: 'Medium Roasted',
-    price: 4.20,
-    image: 'https://example.com/beans2.jpg',
-    sizes: ['250gm', '500gm', '1kg'],
-    selectedSize: '250gm',
-    quantity: 1,
-  },
-  {
-    id: 5,
-    name: 'Liberica Coffee Beans',
-    description: 'Medium Roasted',
-    price: 4.20,
-    image: 'https://example.com/beans2.jpg',
-    sizes: ['250gm', '500gm', '1kg'],
-    selectedSize: '250gm',
-    quantity: 1,
-  },
-  {
-    id: 6,
-    name: 'Liberica Coffee Beans',
-    description: 'Medium Roasted',
-    price: 4.20,
-    image: 'https://example.com/beans2.jpg',
-    sizes: ['250gm', '500gm', '1kg'],
-    selectedSize: '250gm',
-    quantity: 1,
-  },
-  {
-    id: 7,
-    name: 'Liberica Coffee Beans',
-    description: 'Medium Roasted',
-    price: 4.20,
-    image: 'https://example.com/beans2.jpg',
-    sizes: ['250gm', '500gm', '1kg'],
-    selectedSize: '250gm',
-    quantity: 1,
-  },
-];
+const CartScreen = ({ navigation }) => {
+  const { cartItems, updateCartItem, removeFromCart } = useCart() || { cartItems: [] };
 
-
-const CartScreen = () => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
-  const navigation = useNavigation();
-
-  const handleQuantityChange = (id: number, change: number) => {
+  const handleQuantityChange = (id: number, selectedSize: string, change: number) => {
     const updatedItems = cartItems.map(item => {
-      if (item.id === id) {
+      if (item.id === id && item.selectedSize === selectedSize) {
         const newQuantity = item.quantity + change;
-        // Nếu số lượng trở về 0
+
         if (newQuantity < 1) {
           Alert.alert(
             'Xác nhận',
@@ -100,31 +24,28 @@ const CartScreen = () => {
               {
                 text: 'Đồng ý',
                 onPress: () => {
-                  const filteredItems = cartItems.filter(item => item.id !== id);
-                  setCartItems(filteredItems); // Cập nhật danh sách giỏ hàng
+                  removeFromCart(id, selectedSize); // Xóa sản phẩm theo id và size
                 },
               },
             ],
             { cancelable: true }
           );
-          return item; // Không thay đổi sản phẩm ban đầu
+          return item;
         }
+
         return { ...item, quantity: newQuantity };
       }
       return item;
     });
-    setCartItems(updatedItems);
+
+    updatedItems.forEach(updatedItem => {
+      if (updatedItem.quantity !== cartItems.find(item => item.id === updatedItem.id && item.selectedSize === updatedItem.selectedSize)?.quantity) {
+        updateCartItem(updatedItem.id, updatedItem.selectedSize, updatedItem.quantity);  // Cập nhật số lượng
+      }
+    });
   };
 
-  const handleSizeChange = (id: number, selectedSize: string) => {
-    const updatedItems = cartItems.map(item => {
-      if (item.id === id) {
-        return { ...item, selectedSize };
-      }
-      return item;
-    });
-    setCartItems(updatedItems);
-  };
+
 
   const totalPrice = cartItems
     .reduce((acc, item) => acc + item.price * item.quantity, 0)
@@ -141,54 +62,59 @@ const CartScreen = () => {
         <Text style={styles.title}>Cart</Text>
       </View>
 
-      {/* Cart Items */}
       <FlatList
         data={cartItems}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => `${item.id}-${item.selectedSize}`}
         renderItem={({ item }) => (
           <View style={styles.cartItem}>
+            {/* Ảnh sản phẩm */}
             <Image source={{ uri: item.image }} style={styles.image} />
+
             <View style={styles.infoContainer}>
+              {/* Tên sản phẩm */}
               <Text style={styles.productName}>{item.name}</Text>
+
+              {/* Mô tả sản phẩm */}
               <Text style={styles.description}>{item.description}</Text>
 
-              {/* Sizes */}
+              {/* Kích thước sản phẩm */}
               <View style={styles.sizeContainer}>
-                {item.sizes.map(size => (
-                  <TouchableOpacity
-                    key={size}
+                {/* Nếu item.size là một giá trị duy nhất (không phải mảng), bạn có thể trực tiếp hiển thị */}
+                <TouchableOpacity
+                  key={item.size} // Lấy kích thước đã chọn
+                  style={[
+                    styles.sizeButton,
+                    item.size === item.selectedSize && styles.selectedSizeButton,
+                  ]}
+                >
+                  <Text
                     style={[
-                      styles.sizeButton,
-                      item.selectedSize === size && styles.selectedSizeButton,
+                      styles.sizeText,
+                      item.size === item.selectedSize && styles.selectedSizeText,
                     ]}
-                    onPress={() => handleSizeChange(item.id, size)}
                   >
-                    <Text
-                      style={[
-                        styles.sizeText,
-                        item.selectedSize === size && styles.selectedSizeText,
-                      ]}
-                    >
-                      {size}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                    {item.selectedSize}
+                  </Text>
+                </TouchableOpacity>
               </View>
 
-              {/* Price and Quantity */}
+              {/* Giá và Số lượng */}
               <View style={styles.priceQuantityContainer}>
+                {/* Giá */}
                 <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+
+                {/* Số lượng và các nút tăng/giảm */}
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity
                     style={styles.quantityButton}
-                    onPress={() => handleQuantityChange(item.id, -1)}
+                    onPress={() => handleQuantityChange(item.id, item.selectedSize, -1)}
                   >
                     <Icon name="minus" size={16} color="#fff" />
                   </TouchableOpacity>
                   <Text style={styles.quantityText}>{item.quantity}</Text>
                   <TouchableOpacity
                     style={styles.quantityButton}
-                    onPress={() => handleQuantityChange(item.id, 1)}
+                    onPress={() => handleQuantityChange(item.id, item.selectedSize, 1)}
                   >
                     <Icon name="plus" size={16} color="#fff" />
                   </TouchableOpacity>
@@ -234,13 +160,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor,
     borderRadius: 10,
-    // padding: 16,
     marginBottom: 16,
   },
   image: {
     width: '30%',
-    // height: '',
-    // borderRadius: 10,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
   },
@@ -252,6 +175,7 @@ const styles = StyleSheet.create({
     color: primaryColor,
     fontSize: 16,
     fontWeight: 'bold',
+    marginTop: 4,
   },
   description: {
     color: primaryColor,
@@ -328,14 +252,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  backButton: {
-    position: 'absolute',
-    zIndex: 1,
-    padding: 20,
-    top: 30,
-    left: 10,
-    fontSize: 10,
   },
 });
 

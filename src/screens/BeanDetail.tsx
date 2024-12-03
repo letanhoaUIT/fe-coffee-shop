@@ -1,94 +1,79 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useCart } from './context/CartContext';
+import { useFavorites } from './context/FavoritesContext';
 
 const backgroundColor = '#f4f4f4'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 const secondaryColor = '#8d6e52'; // Màu phụ đất
 
 const BeanDetailScreen = ({ route, navigation }) => {
-  const { product } = route.params; // Lấy dữ liệu sản phẩm từ params
+  const { product } = route.params;
+  const { addToCart } = useCart();
   const [selectedSize, setSelectedSize] = useState('250gm');
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { addToFavorites, removeFromFavorites, favoriteItems } = useFavorites(); // Lấy từ context Favorites
+  const [isFavorited, setIsFavorited] = useState(
+    favoriteItems.some(fav => fav.id === product.id) // Kiểm tra nếu sản phẩm đã có trong danh sách yêu thích
+  );
 
-  const toggleFavorite = () => {
-    setIsFavorited(!isFavorited);
+    const toggleFavorite = () => {
+    if (isFavorited) {
+      removeFromFavorites(product.id); // Nếu đã yêu thích, thì bỏ yêu thích
+    } else {
+      addToFavorites(product); // Thêm sản phẩm vào danh sách yêu thích
+    }
+    setIsFavorited(!isFavorited); // Chuyển đổi trạng thái yêu thích
   };
-  const addToCart = () => {
-    // Xử lý logic thêm vào giỏ hàng 
-    console.log(`Added ${product.name} (${selectedSize}) to cart.`);
-  };
-
-  const handlePressCart = () => {
+  
+  const handleAddToCart = () => {
+    addToCart({ ...product, selectedSize, quantity: 1 });
     navigation.navigate('Cart');
   };
+
+  const handlePressCart = () => navigation.navigate('Cart');
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {/* Nút quay lại */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
-
-        {/* Nút giỏ hàng */}
         <TouchableOpacity onPress={handlePressCart} style={styles.cartButton}>
           <Icon name="shopping-cart" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
 
-
-      {/* Ảnh sản phẩm */}
       <Image source={{ uri: product.image }} style={styles.image} />
 
       <View style={styles.bottom}>
-        {/* Biểu tượng trái tim yêu thích */}
-        <TouchableOpacity style={styles.favoriteButton} onPress={toggleFavorite}>
-          <Icon name={isFavorited ? 'heart' : 'heart-o'} size={30} color={primaryColor} />
+        <TouchableOpacity onPress={toggleFavorite} style={styles.favoriteButton}>
+          <Icon name={isFavorited ? 'heart' : 'heart-o'} size={30} color="#0f4359" />
         </TouchableOpacity>
 
-        {/* Thông tin sản phẩm */}
         <View style={styles.infoContainer}>
           <Text style={styles.productName}>{product.name}</Text>
           <Text style={styles.origin}>From {product.origin || 'Unknown'}</Text>
-          <View style={styles.ratingContainer}>
-            <Text style={styles.rating}>⭐ {product.rating || 'N/A'}</Text>
-            <Text style={styles.ratingCount}>({product.ratingCount || 'N/A'})</Text>
-          </View>
+          <Text style={styles.rating}>⭐ {product.rating || 'N/A'} ({product.ratingCount || 'N/A'})</Text>
           <Text style={styles.roastType}>{product.roastType || 'Medium Roasted'}</Text>
         </View>
 
-        {/* Mô tả chi tiết */}
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionTitle}>Description</Text>
-          <Text style={styles.description}>
-            {product.description || 'No description available for this product.'}
-          </Text>
-        </View>
-
-        {/* Lựa chọn kích thước */}
         <Text style={styles.sizeTitle}>Size</Text>
         <View style={styles.sizeOptions}>
-          {['250gm', '500gm', '1000gm'].map((size) => (
+          {['250gm', '500gm', '1000gm'].map(size => (
             <TouchableOpacity
               key={size}
               style={[styles.sizeButton, selectedSize === size && styles.selectedSizeButton]}
               onPress={() => setSelectedSize(size)}
             >
-              <Text style={[styles.sizeText, selectedSize === size && styles.selectedSizeText]}>
-                {size}
-              </Text>
+              <Text style={[styles.sizeText, selectedSize === size && styles.selectedSizeText]}>{size}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Giá cả và thêm vào giỏ hàng */}
         <View style={styles.priceAndCartContainer}>
-          <View>
-            <Text style={styles.priceTitle}>Price</Text>
-            <Text style={styles.price}>${product.price.toFixed(2)}</Text>
-          </View>
-          <TouchableOpacity style={styles.addToCartButton}>
+          <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+          <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableOpacity>
         </View>

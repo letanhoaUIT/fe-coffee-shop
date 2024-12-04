@@ -8,7 +8,7 @@ const primaryColor = '#0f4359'; // Màu chủ xanh dương
 const secondaryColor = '#8d6e52'; // Màu phụ đất
 
 const CartScreen = ({ navigation }) => {
-  const { cartItems, updateCartItem, removeFromCart } = useCart() || { cartItems: [] };
+  const { cartItems, updateCartItem, removeFromCart } = useCart();
 
   const handleQuantityChange = (id: number, selectedSize: string, change: number) => {
     const updatedItems = cartItems.map(item => {
@@ -52,7 +52,7 @@ const CartScreen = ({ navigation }) => {
     .toFixed(2);
 
   const handlePay = () => {
-    navigation.navigate('Payment', { totalPrice: parseFloat(totalPrice) });
+    navigation.navigate('Payment', { totalPrice: parseFloat(totalPrice), cartItems });
   };
 
   return (

@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, Button, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios'; // Thêm Axios để gọi API
 
-const backgroundColor = 'white'; // Màu nền sáng
-const primaryColor = '#0f4359'; // Màu chủ xanh dương
-const secondaryColor = '#8d6e52'; // Màu phụ đất
+const backgroundColor = 'white';
+const primaryColor = '#0f4359';
+const secondaryColor = '#8d6e52';
 
-// Định nghĩa kiểu cho đơn hàng và các thuộc tính
 interface OrderItem {
   id: number;
   name: string;
@@ -26,71 +26,32 @@ interface Order {
   items: OrderItem[];
 }
 
-const orders = [
-  {
-    id: 1,
-    date: '20th March 2023',
-    totalAmount: 74.40,
-    items: [
-      {
-        id: 1,
-        name: 'Cappuccino',
-        sizes: [
-          { size: 'S', price: 4.20, quantity: 2 },
-          { size: 'M', price: 6.20, quantity: 2 },
-        ],
-        image: 'https://example.com/cappuccino1.jpg',
-      },
-      {
-        id: 2,
-        name: 'Cappuccino',
-        sizes: [
-          { size: 'S', price: 4.20, quantity: 2 },
-          { size: 'M', price: 6.20, quantity: 2 },
-        ],
-        image: 'https://example.com/cappuccino2.jpg',
-      },
-    ],
-  },
-  {
-    id: 2,
-    date: '18th March 2023',
-    totalAmount: 37.20,
-    items: [
-      {
-        id: 3,
-        name: 'Liberica Beans',
-        sizes: [
-          { size: '250gm', price: 4.20, quantity: 2 },
-          { size: '500gm', price: 6.20, quantity: 2 },
-        ],
-        image: 'https://example.com/beans.jpg',
-      },
-    ],
-  },
-  
-];
-
 const OrderHistoryScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false);  // State để kiểm soát modal
-  const [selectedFilter, setSelectedFilter] = useState('');  // State để lưu bộ lọc đã chọn
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true); // State loading
+  const [error, setError] = useState<string | null>(null); // State lỗi
+  const [modalVisible, setModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState('');
-const [activeFilter, setActiveFilter] = useState('');
+  const [activeFilter, setActiveFilter] = useState('');
 
-  // Hàm mở Modal
-  const openFilterModal = () => {
-    setModalVisible(true);
+  // Gọi API từ backend
+  const fetchOrders = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get('https://your-backend-api.com/orders'); // Thay URL bằng API thực tế
+      setOrders(response.data);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load orders. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Hàm đóng Modal
-  const closeFilterModal = () => {
-    setModalVisible(false);
-  };
-
-  const handleApplyFilter = () => {
-    console.log('Selected sort:', selectedSort);
-    closeFilterModal();
-  };
+  // Gọi API khi component render lần đầu
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   // Hàm lọc đơn hàng theo giá trị
   const sortOrders = (orders: Order[], sortType: string): Order[] => {
@@ -103,45 +64,57 @@ const [activeFilter, setActiveFilter] = useState('');
     return orders;
   };
 
-  // Áp dụng tất cả các bộ lọc
   const filteredOrders = sortOrders(orders, selectedSort);
 
-  const renderOrderItem = ({ item }: { item: Order }) => {
-    return (
-      <View style={styles.orderCard}>
-        <Text style={styles.orderDate}>Order Date: {item.date}</Text>
-        <Text style={styles.totalAmount}>Total Amount: ${item.totalAmount.toFixed(2)}</Text>
+  const renderOrderItem = ({ item }: { item: Order }) => (
+    <View style={styles.orderCard}>
+      <Text style={styles.orderDate}>Order Date: {item.date}</Text>
+      <Text style={styles.totalAmount}>Total Amount: ${item.totalAmount.toFixed(2)}</Text>
+      {item.items.map(orderItem => (
+        <View key={orderItem.id} style={styles.orderItem}>
+          <Text style={styles.productName}>{orderItem.name}</Text>
+          {orderItem.sizes.map(size => (
+            <View key={size.size} style={styles.sizeRow}>
+              <Text style={styles.sizeText}>{size.size}</Text>
+              <Text style={styles.priceText}>${size.price.toFixed(2)} x {size.quantity}</Text>
+              <Text style={styles.totalPriceText}>${(size.price * size.quantity).toFixed(2)}</Text>
+            </View>
+          ))}
+        </View>
+      ))}
+    </View>
+  );
 
-        {item.items.map(orderItem => (
-          <View key={orderItem.id} style={styles.orderItem}>
-            <Text style={styles.productName}>{orderItem.name}</Text>
-            {orderItem.sizes.map(size => (
-              <View key={size.size} style={styles.sizeRow}>
-                <Text style={styles.sizeText}>{size.size}</Text>
-                <Text style={styles.priceText}>${size.price.toFixed(2)} x {size.quantity}</Text>
-                <Text style={styles.totalPriceText}>${(size.price * size.quantity).toFixed(2)}</Text>
-              </View>
-            ))}
-          </View>
-        ))}
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={primaryColor} />
       </View>
     );
-  };
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity onPress={fetchOrders} style={styles.retryButton}>
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Order History</Text>
-        {/* <Icon name="user" size={30} color="#0f4359" /> */}
-
-        <TouchableOpacity onPress={openFilterModal}>
-          <Text style={styles.textFilter}>Lọc  <Icon name="filter" size={25} color="#0f4359" /> </Text>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={styles.textFilter}>
+            Filter <Icon name="filter" size={25} color={primaryColor} />
+          </Text>
         </TouchableOpacity>
-
       </View>
 
-      {/* If there are no orders, display the "No Orders" message */}
       {filteredOrders.length === 0 ? (
         <View style={styles.noOrdersContainer}>
           <Image source={require('../../assets/no-order-history.png')} style={styles.noOrdersImage} />
@@ -149,43 +122,40 @@ const [activeFilter, setActiveFilter] = useState('');
         </View>
       ) : (
         <FlatList
-          data={filteredOrders}  // Sử dụng filteredOrders thay vì orders
+          data={filteredOrders}
           keyExtractor={item => item.id.toString()}
           renderItem={renderOrderItem}
         />
       )}
 
-      {/* Modal Bộ lọc */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={closeFilterModal}
+        onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Filter Orders</Text>
-
-            {/* Bộ lọc theo giá trị đơn hàng */}
             <TouchableOpacity
-  style={[styles.filterOption, activeFilter === 'lowToHigh' && { backgroundColor: secondaryColor }]}
-  onPress={() => { setSelectedSort('lowToHigh'); setActiveFilter('lowToHigh'); }}
->
-  <Text style={[styles.filterText, activeFilter === 'lowToHigh' && { color: 'white' }]}>Price: Low to High</Text>
-</TouchableOpacity>
-<TouchableOpacity
-  style={[styles.filterOption, activeFilter === 'highToLow' && { backgroundColor: secondaryColor }]}
-  onPress={() => { setSelectedSort('highToLow'); setActiveFilter('highToLow'); }}
->
-  <Text style={[styles.filterText, activeFilter === 'highToLow' && { color: 'white' }]}>Price: High to Low</Text>
-</TouchableOpacity>
-
+              style={[styles.filterOption, activeFilter === 'lowToHigh' && { backgroundColor: secondaryColor }]}
+              onPress={() => { setSelectedSort('lowToHigh'); setActiveFilter('lowToHigh'); }}
+            >
+              <Text style={[styles.filterText, activeFilter === 'lowToHigh' && { color: 'white' }]}>
+                Price: Low to High
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.filterOption, activeFilter === 'highToLow' && { backgroundColor: secondaryColor }]}
+              onPress={() => { setSelectedSort('highToLow'); setActiveFilter('highToLow'); }}
+            >
+              <Text style={[styles.filterText, activeFilter === 'highToLow' && { color: 'white' }]}>
+                Price: High to Low
+              </Text>
+            </TouchableOpacity>
             <View style={styles.modalButtons}>
-              <TouchableOpacity onPress={closeFilterModal} style={styles.modalButton}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalButton}>
                 <Text style={styles.modalButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleApplyFilter} style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>Apply Filter</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -194,6 +164,7 @@ const [activeFilter, setActiveFilter] = useState('');
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -328,7 +299,37 @@ const styles = StyleSheet.create({
  fontSize: 16,
     color: primaryColor,
   },
-
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: backgroundColor,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: backgroundColor,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  retryButton: {
+    backgroundColor: primaryColor,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default OrderHistoryScreen;

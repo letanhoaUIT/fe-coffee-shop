@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useCart } from './context/CartContext';
 import { useFavorites } from './context/FavoritesContext';
@@ -19,7 +19,7 @@ const BeanDetailScreen = ({ route, navigation }) => {
 
     const toggleFavorite = () => {
     if (isFavorited) {
-      removeFromFavorites(product.id); // Nếu đã yêu thích, thì bỏ yêu thích
+      removeFromFavorites(product.id);
     } else {
       addToFavorites(product); // Thêm sản phẩm vào danh sách yêu thích
     }
@@ -28,7 +28,7 @@ const BeanDetailScreen = ({ route, navigation }) => {
   
   const handleAddToCart = () => {
     addToCart({ ...product, selectedSize, quantity: 1 });
-    navigation.navigate('Cart');
+  Alert.alert('Success', 'Product added to cart!', [{ text: 'OK' }]);
   };
 
   const handlePressCart = () => navigation.navigate('Cart');
@@ -39,17 +39,14 @@ const BeanDetailScreen = ({ route, navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handlePressCart} style={styles.cartButton}>
-          <Icon name="shopping-cart" size={24} color="#fff" />
+        <TouchableOpacity onPress={toggleFavorite} style={styles.favoriteButton}>
+          <Icon name={isFavorited ? 'heart' : 'heart-o'} size={30} color="#0f4359" />
         </TouchableOpacity>
       </View>
 
       <Image source={{ uri: product.image }} style={styles.image} />
 
       <View style={styles.bottom}>
-        <TouchableOpacity onPress={toggleFavorite} style={styles.favoriteButton}>
-          <Icon name={isFavorited ? 'heart' : 'heart-o'} size={30} color="#0f4359" />
-        </TouchableOpacity>
 
         <View style={styles.infoContainer}>
           <Text style={styles.productName}>{product.name}</Text>
@@ -110,7 +107,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: '45%',
+    height: '50%',
     borderBottomLeftRadius: 70,
     borderBottomRightRadius: 70,
   },

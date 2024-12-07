@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useCart } from './context/CartContext';
 import { useFavorites } from './context/FavoritesContext';
@@ -16,16 +16,16 @@ const CoffeeDetailScreen = ({ route, navigation }) => {
   const { addToFavorites, removeFromFavorites, favoriteItems } = useFavorites(); // Lấy từ context Favorites
 
   const [isFavorited, setIsFavorited] = useState(
-    favoriteItems.some(fav => fav.id === product.id) // Kiểm tra nếu sản phẩm đã có trong danh sách yêu thích
+    favoriteItems.some(fav => fav.id === product.id)
   );
   // Hàm toggle yêu thích
   const toggleFavorite = () => {
     if (isFavorited) {
-      removeFromFavorites(product.id); // Nếu đã yêu thích, thì bỏ yêu thích
+      removeFromFavorites(product.id);
     } else {
-      addToFavorites(product); // Thêm sản phẩm vào danh sách yêu thích
+      addToFavorites(product);
     }
-    setIsFavorited(!isFavorited); // Chuyển đổi trạng thái yêu thích
+    setIsFavorited(!isFavorited);
   };
 
   const goBackToHome = () => {
@@ -34,26 +34,24 @@ const CoffeeDetailScreen = ({ route, navigation }) => {
 
   const handleAddToCart = () => {
     addToCart({ ...product, selectedSize, quantity: 1 });
-    navigation.navigate('Cart');
+    Alert.alert('Success', 'Product added to cart!', [{ text: 'OK' }]);
   };
 
 
   return (
     <View style={styles.container}>
-      {/* Mũi tên quay lại */}
-      <TouchableOpacity onPress={goBackToHome} style={styles.backButton}>
-        <Icon name="arrow-left" size={30} color='white' />
-      </TouchableOpacity>
-
+      <View style={styles.header}>
+        <TouchableOpacity onPress={goBackToHome} style={styles.backButton}>
+          <Icon name="arrow-left" size={30} color='white' />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={toggleFavorite} style={styles.favoriteButton}>
+          <Icon name={isFavorited ? 'heart' : 'heart-o'} size={30} color="#0f4359" />
+        </TouchableOpacity>
+      </View>
       {/* Ảnh sản phẩm */}
       <Image source={{ uri: product.image }} style={styles.image} />
 
       <View style={styles.bottom}>
-        {/* Biểu tượng trái tim yêu thích */}
-        <TouchableOpacity style={styles.favoriteButton} onPress={toggleFavorite} >
-          <Icon name={isFavorited ? 'heart' : 'heart-o'} size={30} color={primaryColor} />
-        </TouchableOpacity>
-
         {/* Thông tin sản phẩm */}
         <View style={styles.infoContainer}>
           <Text style={styles.productName}>{product.name}</Text>
@@ -101,21 +99,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f4f4f4',
+    // padding: 16,
   },
-  image: {
-    width: '100%',
-    height: '45%',
-    borderBottomLeftRadius: 70,
-    borderBottomRightRadius: 70,
+  header: {
+    position: 'absolute',
+    top: 40,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    zIndex: 10,
+  },
+  cartButton: {
+    padding: 8,
   },
   bottom: {
     marginHorizontal: 20,
   },
-  favoriteButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    zIndex: 1,
+  backButton: {
+    padding: 8,
+  },
+  image: {
+    width: '100%',
+    height: '50%',
+    borderBottomLeftRadius: 70,
+    borderBottomRightRadius: 70,
   },
   infoContainer: {
     marginTop: 16,
@@ -125,15 +135,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-  description: {
+  origin: {
     color: primaryColor,
     fontSize: 16,
-    marginTop: 8,
+    marginVertical: 4,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 4,
   },
   rating: {
     color: '#ffdd00',
@@ -142,6 +152,25 @@ const styles = StyleSheet.create({
   ratingCount: {
     color: 'gray',
     marginLeft: 8,
+  },
+  roastType: {
+    color: primaryColor,
+    fontSize: 14,
+    marginTop: 8,
+  },
+  descriptionContainer: {
+    marginTop: 16,
+  },
+  descriptionTitle: {
+    color: primaryColor,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  description: {
+    color: primaryColor,
+    fontSize: 14,
+    lineHeight: 20,
   },
   sizeTitle: {
     color: primaryColor,
@@ -157,29 +186,28 @@ const styles = StyleSheet.create({
     backgroundColor: primaryColor,
     borderRadius: 5,
     paddingVertical: 10,
-    paddingHorizontal: 50,
+    paddingHorizontal: 16,
   },
   selectedSizeButton: {
     backgroundColor: secondaryColor,
   },
   sizeText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
   },
   selectedSizeText: {
-    color: '#fff',
     fontWeight: 'bold',
-  },
-  priceTitle: {
-    color: primaryColor,
-    fontSize: 18,
-    marginTop: 20,
   },
   price: {
     color: primaryColor,
     fontSize: 22,
     fontWeight: 'bold',
-    marginTop: 8,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
   },
   addToCartButton: {
     backgroundColor: primaryColor,
@@ -200,13 +228,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-  backButton: {
+  favoriteButton: {
     position: 'absolute',
+    top: 10,
+    right: 10,
     zIndex: 1,
-    padding: 20,
-    top: 30,
-    left: 10,
-    fontSize: 10,
   },
 });
 

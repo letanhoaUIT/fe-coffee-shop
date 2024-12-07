@@ -10,6 +10,10 @@ const secondaryColor = '#8d6e52'; // Màu phụ đất
 const CartScreen = ({ navigation }) => {
   const { cartItems, updateCartItem, removeFromCart } = useCart();
 
+    const handlePressCoffee = (product: any) => {
+    navigation.navigate('CoffeeDetail', { product }); // Điều hướng với tham số product
+  };
+
   const handleQuantityChange = (id: number, selectedSize: string, change: number) => {
     const updatedItems = cartItems.map(item => {
       if (item.id === id && item.selectedSize === selectedSize) {
@@ -66,6 +70,7 @@ const CartScreen = ({ navigation }) => {
         data={cartItems}
         keyExtractor={item => `${item.id}-${item.selectedSize}`}
         renderItem={({ item }) => (
+<TouchableOpacity onPress={() => handlePressCoffee(item)}>
           <View style={styles.cartItem}>
             {/* Ảnh sản phẩm */}
             <Image source={{ uri: item.image }} style={styles.image} />
@@ -122,6 +127,7 @@ const CartScreen = ({ navigation }) => {
               </View>
             </View>
           </View>
+          </TouchableOpacity>
         )}
       />
 

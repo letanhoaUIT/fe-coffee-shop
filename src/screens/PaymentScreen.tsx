@@ -10,13 +10,19 @@ const secondaryColor = '#8d6e52'; // Màu phụ đất
 
 const PaymentScreen = ({ route, navigation }) => {
   const { totalPrice } = route.params; // Lấy tổng giá từ CartScreen
-  const [selectedMethod, setSelectedMethod] = useState('Cash');
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [address, setAddress] = useState(''); // Địa chỉ nhận hàng
   const [recipient, setRecipient] = useState(''); // Người nhận hàng
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
- const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
+    const paymentMethods = [
+    { id: 'ZaloPay', name: 'ZaloPay', icon: 'https://your-icon-link/zalo.png' },
+    { id: 'MoMo', name: 'MoMo Wallet', icon: 'https://your-icon-link/momo.png' },
+    { id: 'ATM', name: 'ATM Card', icon: 'https://your-icon-link/atm.png' },
+    { id: 'Visa', name: 'Visa, Master, JCB', icon: 'https://your-icon-link/visa.png' },
+  ];
   const handlePayment = () => {
     if (!address) {
       Alert.alert('Lỗi', 'Bạn cần nhập địa chỉ nhận hàng trước khi thanh toán.');
@@ -53,7 +59,7 @@ const PaymentScreen = ({ route, navigation }) => {
         latitude,
         longitude,
       });
-console.log(reverseGeocode);
+      console.log(reverseGeocode);
       if (reverseGeocode.length > 0) {
         let { name, district, city, country } = reverseGeocode[0];
         let fullAddress = `${name}, ${district}, ${city}, ${country}`;
@@ -113,44 +119,24 @@ console.log(reverseGeocode);
       </View>
 
 
-      {/* Credit Card */}
-      <TouchableOpacity
-        style={[
-          styles.paymentMethod,
-          selectedMethod === 'Credit Card' && styles.selectedPaymentMethod,
-        ]}
-        onPress={() => setSelectedMethod('Cash')}
-      >
-        <Icon name="credit-card" size={24} color="#fff" />
-        <Text style={styles.paymentMethodText}>Cash on Delivery</Text>
-      </TouchableOpacity>
+      {paymentMethods.map((method) => (
+        <TouchableOpacity
+          key={method.id}
+          style={styles.paymentMethod}
+          onPress={() => setSelectedMethod(method.id)}
+        >
+          {/* Biểu tượng của phương thức thanh toán */}
+          <Image source={{ uri: method.icon }} style={styles.methodIcon} />
+          <Text style={styles.methodText}>{method.name}</Text>
 
-<TouchableOpacity
-        style={[
-          styles.paymentMethod,
-          selectedMethod === 'Momo' && styles.selectedPaymentMethod,
-        ]}
-        onPress={() => setSelectedMethod('Momo')}
-      >
-        {/* Hình ảnh biểu tượng Momo với borderRadius để tạo hình tròn */}
-        <Image
-          source={{ uri: 'https://cdn.tgdd.vn/2020/03/GameApp/Untitled-2-200x200.jpg' }}
-          style={styles.paymentMethodIcon}
-        />
-        <Text style={styles.paymentMethodText}>Momo</Text>
-      </TouchableOpacity>
-
-      {/* VNPay */}
-      <TouchableOpacity
-        style={[
-          styles.paymentMethod,
-          selectedMethod === 'VNPay' && styles.selectedPaymentMethod,
-        ]}
-        onPress={() => setSelectedMethod('VNPay')}
-      >
-        <Icon name="bank" size={24} color="#fff" />
-        <Text style={styles.paymentMethodText}>VNPay</Text>
-      </TouchableOpacity>
+          {/* Hiển thị nút tick nếu được chọn */}
+          <View style={styles.radioButton}>
+            {selectedMethod === method.id && (
+              <Icon name="check" size={14} color="#fff" />
+            )}
+          </View>
+        </TouchableOpacity>
+      ))}
 
       {/* Modal thay đổi địa chỉ */}
       <Modal
@@ -232,23 +218,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 110,
   },
-  paymentMethod: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: primaryColor,
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
   selectedPaymentMethod: {
     backgroundColor: secondaryColor,
-  },
-  paymentMethodText: {
-    color: '#fff',
-    fontSize: 16,
-    marginLeft: 16,
-    flex: 1,
   },
   footer: {
     marginTop: 'auto',
@@ -359,16 +330,63 @@ const styles = StyleSheet.create({
   },
   optionText: { marginLeft: 10, fontSize: 14, color: '#555' },
 
-    map: {
+  map: {
     width: '100%',
     height: 400,
     marginTop: 20,
     borderRadius: 10,
   },
+  paymentMethod: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    backgroundColor: '#f9f9f9',
+  },
+  methodIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  methodText: {
+    flex: 1,
+    marginLeft: 15,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+  },
+  radioButton: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#007bff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paymentMethodText: {
+    color: '#fff',
+    fontSize: 16,
+    marginLeft: 10,
+  },
   paymentMethodIcon: {
-    width: 45,  // Điều chỉnh kích thước hình ảnh
-    height: 45,
-    borderRadius: 20,  // Để làm cho hình ảnh có dạng tròn
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 10,
+  },
+  circle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#007bff',
   },
 });
 

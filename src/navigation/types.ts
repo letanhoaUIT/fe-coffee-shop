@@ -17,6 +17,7 @@ export type RootStackParamList = {
   UserProfile: undefined;
   EditProfile: undefined;
   ChangePassword: undefined;
+  Main: undefined;
 };
 
 export type BeanDetailScreenRouteProp = RouteProp<RootStackParamList, 'Bean'>;

@@ -18,7 +18,7 @@ const BottomTabNavigator = () => {
             let iconName;
 
             switch (route.name) {
-              case 'Home':
+              case 'HomeMain':
                 iconName = 'home';
                 break;
               case 'Cart':
@@ -51,7 +51,7 @@ const BottomTabNavigator = () => {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="HomeMain" component={HomeScreen} />
         <Tab.Screen name="Cart" component={CartScreen} />
         <Tab.Screen name="Favorites" component={FavoritesScreen} />
         <Tab.Screen name="History" component={OrderHistory} />

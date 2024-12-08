@@ -84,7 +84,8 @@ const FavoritesScreen = () => {
                     name="heart"
                     size={24}
                     color={favoriteItems.some(fav => fav.id === item.id) ? 'red' : 'gray'}
-                    onPress={() => handleFavoriteToggle(item)} // Chuyển đổi yêu thích khi nhấn vào biểu tượng tim
+                    onPress={() => handleFavoriteToggle(item)}
+                    style={styles.heart}
                   />
                 </View>
                 <Text style={styles.description}>{item.description}</Text>
@@ -138,6 +139,9 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     flex: 1,
   },
+  heart: {
+    padding: 4,
+  },
   topSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -146,11 +150,11 @@ const styles = StyleSheet.create({
     color: primaryColor,
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 10,
+    marginTop: 4,
   },
   description: {
     color: primaryColor,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   ratingContainer: {
     flexDirection: 'row',

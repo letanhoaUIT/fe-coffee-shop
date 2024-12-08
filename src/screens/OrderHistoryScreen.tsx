@@ -216,13 +216,15 @@ const styles = StyleSheet.create({
   },
   textFilter: { color: primaryColor, fontSize: 18, fontWeight: 'bold', },
   orderCard: {
-    backgroundColor: '#333',
+    backgroundColor: 'white',
     borderRadius: 10,
     marginVertical: 10,
     padding: 16,
+    borderWidth: 1,
+
   },
   orderDate: {
-    color: '#fff',
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -235,7 +237,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   productName: {
-    color: '#fff',
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -245,13 +247,13 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   sizeText: {
-    color: '#aaa',
+    color: 'black',
   },
   priceText: {
-    color: '#fff',
+    color: 'black',
   },
   totalPriceText: {
-    color: '#fff',
+    color: 'black',
     fontWeight: 'bold',
   },
   // New styles for "No Orders" section

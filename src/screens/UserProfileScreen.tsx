@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from './context/AuthContext';
 
 const UserProfileScreen = () => {
   const navigation = useNavigation();
@@ -20,6 +21,8 @@ const UserProfileScreen = () => {
   const [avatar, setAvatar] = useState(
     'https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png'
   );
+  const { logout } = useAuth();
+  
   const handleShare = async () => {
     try {
       const result = await Share.share({
@@ -74,20 +77,42 @@ const handleAvatarPress = async () => {
   }
 };
 
-  const handleLogout = async () => {
-    try {
-      // Xóa token hoặc bất kỳ thông tin đăng nhập nào bạn đã lưu
-      await AsyncStorage.removeItem('userToken');
+const handleLogout = async () => {
+  Alert.alert(
+    'Đăng xuất',
+    'Bạn có chắc chắn muốn đăng xuất không?',
+    [
+      {
+        text: 'Hủy',
+        style: 'cancel',
+      },
+      {
+        text: 'Đồng ý',
+        onPress: async () => {
+          try {
+            // Xóa token hoặc thông tin đăng nhập đã lưu trong AsyncStorage
+            await AsyncStorage.removeItem('userToken');
+            console.log('Token đã được xóa khỏi AsyncStorage.');
+            logout(); 
+            // Đặt lại navigation stack để quay lại màn hình Login
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }], // Điều hướng tới màn hình Login
+            });
+          } catch (error) {
+            console.error('Lỗi khi đăng xuất:', error);
+            Alert.alert(
+              'Lỗi',
+              'Đã xảy ra lỗi khi đăng xuất. Vui lòng thử lại.'
+            );
+          }
+        },
+      },
+    ],
+    { cancelable: true }
+  );
+};
 
-      // Chuyển hướng đến màn hình Login
-      navigation.reset({
-        index: 0,  // Chỉ định màn hình đầu tiên trong stack
-        routes: [{ name: 'Login' }],  // Điều hướng tới màn hình 'Login'
-      });
-    } catch (error) {
-      console.error('Error during logout:', error);  // Xử lý lỗi nếu có
-    }
-  };
   
   return (
     <View style={styles.container}>

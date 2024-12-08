@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { FlatList, Text, TouchableOpacity, View, Image, StyleSheet } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 const backgroundColor = 'white'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 const secondaryColor = '#8d6e52'; // Màu phụ đất
@@ -14,7 +15,7 @@ interface CoffeeProduct {
   image: string;
 }
 
-const CoffeeDrinksList = ({onPressCoffee }: { onPressCoffee: (item: CoffeeProduct) => void }) => {
+const CoffeeDrinksList = ({ onPressCoffee }: { onPressCoffee: (item: CoffeeProduct) => void }) => {
   // Giả lập dữ liệu cho Coffee Drinks
   const coffeeDrinks: CoffeeProduct[] = [
     {
@@ -58,6 +59,9 @@ const CoffeeDrinksList = ({onPressCoffee }: { onPressCoffee: (item: CoffeeProduc
                 <Text style={styles.productDescription}>{item.description}</Text>
                 <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
               </View>
+              <TouchableOpacity style={styles.addButton} onPress={() => onPressCoffee(item)}>
+                <Icon name="plus" size={12} color="#0f4359" />
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         )}
@@ -107,6 +111,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: primaryColor,
+  },
+    addButton: {
+    position: 'absolute',
+    right: 8,
+    bottom: 15,
+    backgroundColor: 'white',
+    borderRadius: 180,
+    padding: 6,
+    borderWidth: 1, // Độ dày của viền
+    borderColor: primaryColor,
   },
 });
 

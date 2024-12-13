@@ -5,16 +5,21 @@ import UserProfileScreen from '../screens/UserProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import ChangePasswordScreen from '../screens/ChangePasswordScreen';
 
-const Stack = createStackNavigator();
 
-const UserStackNavigator = () => {
-  return (
-    <Stack.Navigator initialRouteName="UserProfile" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="UserProfile" component={UserProfileScreen} />
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
-    </Stack.Navigator>
-  );
+type UserStackParamList = {
+  UserProfile: undefined; 
+  EditProfile: undefined;
+  ChangePassword: undefined;
 };
+
+const UserStack = createStackNavigator<UserStackParamList>();
+
+const UserStackNavigator = () => (
+  <UserStack.Navigator screenOptions={{ headerShown: false }}>
+    <UserStack.Screen name="UserProfile" component={UserProfileScreen} />
+    <UserStack.Screen name="EditProfile" component={EditProfileScreen} />
+    <UserStack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+  </UserStack.Navigator>
+);
 
 export default UserStackNavigator;

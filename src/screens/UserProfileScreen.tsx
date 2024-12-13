@@ -1,20 +1,119 @@
-// src/screens/UserProfileScreen.tsx
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  Alert, Share,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from './context/AuthContext';
 
 const UserProfileScreen = () => {
   const navigation = useNavigation();
+  const [fullName, setFullName] = useState('Ebenezer Omosuli');
+  const [phoneNumber, setPhoneNumber] = useState('0123456789');
+  const [avatar, setAvatar] = useState(
+    'https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png'
+  );
+  const { logout } = useAuth();
+  
+  const handleShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `🌟 Khám phá ngay ứng dụng Coffee Shop tuyệt vời này! \n\nTận hưởng những món cà phê ngon nhất, tìm kiếm các loại hạt cà phê chất lượng và dễ dàng đặt hàng ngay trên điện thoại của bạn! 🚀\n\n📲 Tải ngay ứng dụng Coffee Shop để trải nghiệm:\n\n- Khám phá menu cà phê đa dạng ☕\n- Tìm hiểu về các loại hạt cà phê độc đáo 🌱\n- Thêm món yêu thích vào danh sách yêu thích ❤️\n- Đặt hàng và thanh toán nhanh chóng 💳\n\nTải ứng dụng ngay và khám phá thế giới cà phê tuyệt vời!`,
+        // url: 'https://coffeeshopapp.com',  // URL hoặc đường link tải APK nếu có
+        title: 'Coffee Shop App',
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // Đã chia sẻ với một ứng dụng cụ thể
+          console.log(`Shared with activity type: ${result.activityType}`);
+        } else {
+          // Đã chia sẻ nhưng không có ứng dụng cụ thể
+          console.log('Shared successfully');
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // Đã hủy chia sẻ
+        console.log('Share dismissed');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to share content.');
+      console.error(error);
+    }
+  };
 
   const handleEditProfile = () => {
-    navigation.navigate('EditProfile'); // Điều hướng sang màn hình EditProfile
+    Alert.alert('Profile updated!', 'Your changes have been saved.');
   };
 
   const handleChangePassword = () => {
     navigation.navigate('ChangePassword'); // Điều hướng sang màn hình ChangePassword
   };
 
+const handleAvatarPress = async () => {
+  const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (permissionResult.granted === false) {
+    alert('Permission to access the gallery is required!');
+    return;
+  }
+
+  const pickerResult = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [1, 1],
+    quality: 1,
+  });
+
+  if (!pickerResult.canceled) {
+    setAvatar(pickerResult.assets[0].uri);
+  }
+};
+
+const handleLogout = async () => {
+  Alert.alert(
+    'Đăng xuất',
+    'Bạn có chắc chắn muốn đăng xuất không?',
+    [
+      {
+        text: 'Hủy',
+        style: 'cancel',
+      },
+      {
+        text: 'Đồng ý',
+        onPress: async () => {
+          try {
+            // Xóa token hoặc thông tin đăng nhập đã lưu trong AsyncStorage
+            await AsyncStorage.removeItem('userToken');
+            console.log('Token đã được xóa khỏi AsyncStorage.');
+            logout(); 
+            // Đặt lại navigation stack để quay lại màn hình Login
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }], // Điều hướng tới màn hình Login
+            });
+          } catch (error) {
+            console.error('Lỗi khi đăng xuất:', error);
+            Alert.alert(
+              'Lỗi',
+              'Đã xảy ra lỗi khi đăng xuất. Vui lòng thử lại.'
+            );
+          }
+        },
+      },
+    ],
+    { cancelable: true }
+  );
+};
+
+  
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -23,24 +122,44 @@ const UserProfileScreen = () => {
           <Icon name="arrow-left" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.title}>Profile</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleShare}>
           <Icon name="share-alt" size={24} color="#000" />
         </TouchableOpacity>
       </View>
 
       {/* User Information */}
       <View style={styles.profileContainer}>
-        <Image 
-          source={{ uri: 'https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png' }} // Thay bằng avatar của người dùng
-          style={styles.avatar}
-        />
-        <Text style={styles.userName}>Ebenezer Omosuli</Text>
-        <Text style={styles.userHandle}>@eben10</Text>
-        <TouchableOpacity style={styles.editProfileButton} onPress={handleEditProfile}>
-          <Text style={styles.editProfileText}>Edit Profile</Text>
+        <TouchableOpacity onPress={handleAvatarPress}>
+          <Image source={{ uri: avatar }} style={styles.avatar} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.changePasswordButton} onPress={handleChangePassword}>
+        <TextInput
+          style={styles.input}
+          value={fullName}
+          onChangeText={setFullName}
+          placeholder="Full Name"
+        />
+        <TextInput
+          style={styles.input}
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+          placeholder="Phone Number"
+          keyboardType="phone-pad"
+        />
+        <TouchableOpacity style={styles.saveButton} onPress={handleEditProfile}>
+          <Text style={styles.saveButtonText}>Save Changes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.changePasswordButton}
+          onPress={handleChangePassword}
+        >
           <Text style={styles.changePasswordText}>Change Password</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={handleLogout} // Đây là hàm sẽ xử lý đăng xuất
+        >
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -60,8 +179,10 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   title: {
-    fontSize: 18,
+    color: '0f4359',
     fontWeight: 'bold',
+    fontSize: 28,
+    textAlign: 'center',
   },
   profileContainer: {
     alignItems: 'center',
@@ -73,24 +194,26 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginBottom: 20,
   },
-  userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  input: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
   },
-  userHandle: {
-    fontSize: 16,
-    color: 'gray',
-    marginBottom: 20,
-  },
-  editProfileButton: {
-    backgroundColor: '#E0E0E0',
+  saveButton: {
+    backgroundColor: '#0f4359',
     borderRadius: 5,
     paddingHorizontal: 20,
     paddingVertical: 10,
+    marginTop: 10,
   },
-  editProfileText: {
+  saveButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   changePasswordButton: {
     backgroundColor: '#E0E0E0',
@@ -102,6 +225,16 @@ const styles = StyleSheet.create({
   changePasswordText: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  logoutButton: {
+    backgroundColor: '#F44336', // Màu đỏ cho nút logout
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  logoutText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Alert,
+  Alert, Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './context/AuthContext';
@@ -35,6 +35,10 @@ const RegisterScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require('../../assets/logo.png')}
+        style={styles.image}
+      />
       <Text style={styles.title}>Register</Text>
 
       <View style={styles.inputContainer}>
@@ -84,35 +88,46 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     marginBottom: 20,
     textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#0f4359',
   },
   inputContainer: {
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 8,
     paddingHorizontal: 10,
-    marginBottom: 12,
+    marginBottom: 15,
   },
   input: {
     height: 40,
+    fontSize: 16,
+    color: '#333',
   },
   button: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#0f4359',
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: 'center',
+    marginBottom: 15,
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
   },
   loginLink: {
-    color: '#007BFF',
+    color: '#0f4359',
     marginTop: 20,
     textAlign: 'center',
     fontSize: 16,
+  },
+    image: {
+    width: 150,
+    height: 150,
+    alignSelf: 'center',
+    marginBottom: 30,
   },
 });
 

@@ -116,7 +116,7 @@ const handleSearch = (query: string) => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>☕ FIND THE BEST COFFEE</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('UserStack',{ screen: 'UserProfile'} )}>
           <Image
             source={{
               uri: 'https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png',

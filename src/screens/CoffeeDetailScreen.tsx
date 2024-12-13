@@ -234,6 +234,12 @@ const styles = StyleSheet.create({
     right: 10,
     zIndex: 1,
   },
+  priceTitle:{
+        fontSize: 14,
+    fontWeight: '500',
+    color: primaryColor,
+    marginTop: 5,
+  }
 });
 
 export default CoffeeDetailScreen;

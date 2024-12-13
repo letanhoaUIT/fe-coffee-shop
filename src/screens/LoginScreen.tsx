@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './context/AuthContext';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const defaultUser = {
   email: 'test',
@@ -22,16 +23,29 @@ const LoginScreen = () => {
 
     if (email === defaultUser.email && password === defaultUser.password) {
       login(); // Đánh dấu người dùng đã đăng nhập
+      // navigation.navigate('Home');
       Alert.alert('Success', 'Login successful!');
     } else {
       Alert.alert('Error', 'Invalid email or password');
     }
   };
 
+  const handleGoogleLogin = () => {
+    Alert.alert('Google Login', 'This is where Google login would be implemented.');
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      {/* Hình ảnh logo */}
+      <Image
+        source={require('../../assets/logo.png')}
+        style={styles.image}
+      />
+      
+      {/* Tiêu đề */}
+      <Text style={styles.title}>Welcome</Text>
 
+      {/* Trường email */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -41,6 +55,7 @@ const LoginScreen = () => {
         />
       </View>
 
+      {/* Trường mật khẩu */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -51,11 +66,17 @@ const LoginScreen = () => {
         />
       </View>
 
+      {/* Nút đăng nhập */}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-      {/* Thêm liên kết đến màn hình Register */}
+      <Text style={styles.orText}>Or login with...</Text>
+      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
+        <Icon name="google" size={24} color="white" />
+      </TouchableOpacity>
+
+      {/* Liên kết đến màn hình đăng ký */}
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
         <Text style={styles.registerLink}>New to the app? Register</Text>
       </TouchableOpacity>
@@ -70,35 +91,65 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     marginBottom: 20,
     textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#0f4359',
   },
   inputContainer: {
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 8,
     paddingHorizontal: 10,
-    marginBottom: 12,
+    marginBottom: 15,
   },
   input: {
     height: 40,
+    fontSize: 16,
+    color: '#333',
   },
   button: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#0f4359',
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: 'center',
+    marginBottom: 15,
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
+  },
+  googleButton: {
+    backgroundColor: '#db4437', // Màu của Google login
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 20,
+    width: 100,
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
+  googleButtonText: {
+    color: 'white',
+    fontSize: 18,
   },
   registerLink: {
-    color: '#007BFF',
-    marginTop: 20,
+    color: '#0f4359',
     textAlign: 'center',
     fontSize: 16,
+  },
+  image: {
+    width: 150,
+    height: 150,
+    alignSelf: 'center',
+    marginBottom: 30,
+  },
+  orText: {
+    textAlign: 'center',  // Căn giữa
+    fontSize: 16,
+    color: '#0f4359',
+    marginVertical: 15,  // Khoảng cách giữa chữ và nút Google
   },
 });
 

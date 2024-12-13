@@ -69,7 +69,10 @@ const BeanDetailScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.priceAndCartContainer}>
-          <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+          <View>
+            <Text style={styles.priceTitle}>Price</Text>
+            <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+          </View>
           <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableOpacity>
@@ -218,6 +221,11 @@ const styles = StyleSheet.create({
     right: 10,
     zIndex: 1,
   },
+  priceTitle:{
+        fontSize: 14,
+    fontWeight: '500',
+    color: primaryColor,
+    marginTop: 5,
+  }
 });
-
 export default BeanDetailScreen;

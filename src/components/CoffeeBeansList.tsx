@@ -1,6 +1,7 @@
 // CoffeeBeansList.tsx
 import React from 'react';
 import { FlatList, Text, TouchableOpacity, View, Image, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 
@@ -20,14 +21,14 @@ const CoffeeBeansList = ({ onPressProduct }: { onPressProduct: (item: CoffeeProd
       name: 'Arabica Beans',
       description: 'High-quality coffee beans from Ethiopia',
       price: 15.0,
-      image: 'https://example.com/arabica.jpg',
+      image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
     },
     {
       id: 2,
       name: 'Robusta Beans',
       description: 'Strong and bold beans from Vietnam',
       price: 12.5,
-      image: 'https://example.com/robusta.jpg',
+      image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
     },
     {
       id: 3,
@@ -55,6 +56,9 @@ const CoffeeBeansList = ({ onPressProduct }: { onPressProduct: (item: CoffeeProd
                 <Text style={styles.productDescription}>{item.description}</Text>
                 <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
               </View>
+              <TouchableOpacity style={styles.addButton} onPress={() => onPressProduct(item)}>
+                <Icon name="plus" size={12} color="#0f4359" />
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         )}
@@ -104,6 +108,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: primaryColor,
+  },
+  addButton: {
+    position: 'absolute',
+    right: 8,
+    bottom: 15,
+    backgroundColor: 'white',
+    borderRadius: 180,
+    padding: 6,
+    borderWidth: 1, // Độ dày của viền
+    borderColor: primaryColor,
   },
 });
 

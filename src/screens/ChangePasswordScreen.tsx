@@ -71,8 +71,10 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   title: {
-    fontSize: 18,
+    color: '#0f4359',
     fontWeight: 'bold',
+    fontSize: 24,
+    textAlign: 'center',
   },
   form: {
     marginTop: 40,
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   updateButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#0f4359',
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: 'center',

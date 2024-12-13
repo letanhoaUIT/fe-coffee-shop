@@ -6,7 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { CartProvider } from './src/screens/context/CartContext';
 import { FavoritesProvider } from './src/screens/context/FavoritesContext';
 import { AuthProvider, useAuth } from './src/screens/context/AuthContext'; // Import AuthProvider và useAuth
-
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {

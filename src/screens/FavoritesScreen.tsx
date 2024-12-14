@@ -3,42 +3,6 @@ import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { useFavorites } from './context/FavoritesContext';
-// const favoriteItems = [
-//   {
-//     id: 1,
-//     name: 'Cappuccino',
-//     description: 'With Steamed Milk',
-//     price: 4.20,
-//     rating: 4.5,
-//     ratingCount: 6879,
-//     image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
-//     tags: ['Coffee', 'Milk'],
-//     roastType: 'Medium Roasted',
-//   },
-//     {
-//     id: 2,
-//     name: 'Cappuccino',
-//     description: 'With Steamed Milk',
-//     price: 4.20,
-//     rating: 4.5,
-//     ratingCount: 6879,
-//     image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
-//     tags: ['Coffee', 'Milk'],
-//     roastType: 'Medium Roasted',
-//   },
-//     {
-//     id: 3,
-//     name: 'Cappuccino',
-//     description: 'With Steamed Milk',
-//     price: 4.20,
-//     rating: 4.5,
-//     ratingCount: 6879,
-//     image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
-//     tags: ['Coffee', 'Milk'],
-//     roastType: 'Medium Roasted',
-//   },
-//   // Thêm nhiều sản phẩm yêu thích khác nếu cần
-// ];
 
 const backgroundColor = 'white'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
@@ -93,7 +57,7 @@ const FavoritesScreen = () => {
                   <Text style={styles.rating}>⭐ {item.rating}</Text>
                   {/* <Text style={styles.ratingCount}>({item.ratingCount})</Text> */}
                 </View>
-                <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+                <Text style={styles.price}>${item.price}</Text>
               </View>
             </View>
           </TouchableOpacity>

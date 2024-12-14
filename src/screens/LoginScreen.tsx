@@ -3,6 +3,8 @@ import { View, TextInput, StyleSheet, Text, TouchableOpacity, Alert, Image } fro
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './context/AuthContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import api from '../api/axiosConfig'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';  
 
 const defaultUser = {
   email: 'test',
@@ -15,20 +17,30 @@ const LoginScreen = () => {
   const { login } = useAuth(); 
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Email and Password are required');
-      return;
-    }
+const handleLogin = async () => {
+  if (!email || !password) {
+    Alert.alert('Error', 'Email and Password are required');
+    return;
+  }
 
-    if (email === defaultUser.email && password === defaultUser.password) {
-      login(); // Đánh dấu người dùng đã đăng nhập
-      // navigation.navigate('Home');
+  try {
+    const response = await api.post('auth/login', { email, password }); // Gửi yêu cầu đến API
+    if (response.data.token) {
+      await AsyncStorage.setItem('authToken', response.data.token); // Lưu token vào AsyncStorage
       Alert.alert('Success', 'Login successful!');
+      login(); // Đánh dấu người dùng đã đăng nhập
+      // navigation.navigate('HomeScn'); // Chuyển hướng đến màn hình chính
     } else {
-      Alert.alert('Error', 'Invalid email or password');
+      Alert.alert('Error', 'No token received from the server');
     }
-  };
+  } catch (error) {
+  if (error instanceof Error) {
+    Alert.alert('Error', error.message);
+  } else {
+    Alert.alert('Error', 'An unknown error occurred');
+  }
+}
+};
 
   const handleGoogleLogin = () => {
     Alert.alert('Google Login', 'This is where Google login would be implemented.');

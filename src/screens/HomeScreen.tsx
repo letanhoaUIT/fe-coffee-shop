@@ -7,42 +7,57 @@ import { RootStackParamList } from '../navigation/types';
 import Banner from '../components/Home/Banner';
 import CoffeeBeansList from '../components/CoffeeBeansList';
 import CoffeeDrinksList from '../components/CoffeeDrinksList';
-
+import api from '../api/axiosConfig';
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomeScn'>;
 
-const { width, height } = Dimensions.get('window'); // Lấy chiều rộng và chiều cao màn hình
+const { width } = Dimensions.get('window'); 
 
-const backgroundColor = 'white'; // Màu nền sáng
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 const secondaryColor = '#8d6e52'; // Màu phụ đất
 
 const categories = ['All', 'Cappuccino', 'Espresso', 'Americano', 'Macchiato', 'Arabica', 'Robusta'];
 
-const coffeeProducts = [
-  { id: 1, name: 'Cappuccino', description: 'With Steamed Milk', price: 4.20, rating: 4.5, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 2, name: 'Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 3, name: 'Robusta Beans', description: 'Medium Roasted', price: 5.00, rating: 4.0, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 4, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 5, name: 'Arabica Beans', description: 'With Steamed Milk', price: 6.00, rating: 4.1, image: 'https://example.com/beans2.jpg' },
-  { id: 6, name: ' m Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 7, name: ' l Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 8, name: 'x Cappuccino', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 9, name: 'espresso', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 10, name: 'robusta', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-  { id: 11, name: 'arabica', description: 'With Foam', price: 4.20, rating: 4.2, image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg' },
-];
 const HomeScreen = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const scrollX = useRef(new Animated.Value(0)).current;
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState(coffeeProducts);
+  const [beans, setBeans] = useState<any[]>([]);
+  const [drinks, setDrinks] = useState<any[]>([]);
+  const [selectedBean, setSelectedBean] = useState<string | null>(null);
+  const [selectedDrink, setSelectedDrink] = useState<string | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
+  const [coffeeProducts, setCoffeeProducts] = useState<any[]>([]); // Dữ liệu tổng hợp sản phẩm
+    const [selectedCategory, setSelectedCategory] = useState('All');
 
   const bannerImages = [
     'https://img.buzzfeed.com/buzzfeed-static/static/2024-08/30/22/asset/673a78601a5a/sub-buzz-1848-1725055325-1.jpg',
     'https://img.lovepik.com/photo/20211119/small/lovepik-delicious-coffee-and-coffee-beans-picture_500217119.jpg',
     'https://img.lovepik.com/photo/48017/7352.jpg_wh300.jpg',
   ];
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const [categoriesRes, beansRes, drinksRes] = await Promise.all([
+        api.get('categories'), 
+        api.get('coffeeBeans'), 
+        api.get('coffeeDrinks'), 
+      ]);
+
+      setBeans(beansRes.data); // Lưu dữ liệu coffee beans
+      setDrinks(drinksRes.data); // Lưu dữ liệu coffee drinks
+
+      // Kết hợp sản phẩm từ beans và drinks
+      const combinedProducts = [...beansRes.data, ...drinksRes.data];
+      setFilteredProducts(combinedProducts); 
+      setCoffeeProducts(combinedProducts); 
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  fetchData(); 
+}, []); 
 
 
   const handlePressProduct = (product: any) => {
@@ -76,6 +91,8 @@ const handleSearch = (query: string) => {
     setFilteredProducts(filtered);
   };
 
+
+
   // Render item trong FlatList
   const renderItem = ({ item, index }: { item: any, index: number }) => {
     const inputRange = [
@@ -95,11 +112,11 @@ const handleSearch = (query: string) => {
     return (
       <TouchableOpacity onPress={() => handlePressCoffee(item)}>
         <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
-          <Image source={{ uri: item.image }} style={styles.productImage} />
+          <Image source={{ uri: item.image_url}} style={styles.productImage} />
           <View style={styles.productInfo}>
             <Text style={styles.productName}>{item.name}</Text>
             <Text style={styles.productDescription}>{item.description}</Text>
-            <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+            <Text style={styles.productPrice}>${item.price}</Text>
           </View>
           <TouchableOpacity style={styles.addButton}>
             <Icon name="plus" size={12} color="#0f4359" />
@@ -116,7 +133,7 @@ const handleSearch = (query: string) => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>☕ FIND THE BEST COFFEE</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('UserStack',{ screen: 'UserProfile'} )}>
+        <TouchableOpacity onPress={() => navigation.navigate('UserStack', { screen: 'UserProfile' })}>
           <Image
             source={{
               uri: 'https://uploads.commoninja.com/searchengine/wordpress/user-avatar-reloaded.png',
@@ -150,6 +167,7 @@ const handleSearch = (query: string) => {
         ))}
       </ScrollView>
 
+
       {/* Banner component */}
       <Banner images={bannerImages} />
 
@@ -158,7 +176,7 @@ const handleSearch = (query: string) => {
       <Animated.FlatList
         horizontal
         data={filteredProducts}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item.id ? item.id.toString() : item.name} // Kiểm tra item.id, nếu không có thì dùng item.name
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
         onScroll={Animated.event(
@@ -167,6 +185,7 @@ const handleSearch = (query: string) => {
         )}
         scrollEventThrottle={16} // Cải thiện hiệu suất
       />
+
 
 
       {/* Đường kẻ ngang */}

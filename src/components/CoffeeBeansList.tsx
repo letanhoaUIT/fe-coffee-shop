@@ -1,60 +1,49 @@
-// CoffeeBeansList.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View, Image, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import api from '../api/axiosConfig';
 
 const primaryColor = '#0f4359'; // Màu chủ xanh dương
 
 interface CoffeeProduct {
-  id: number;
+  id: string; // Sử dụng string vì ID trong API có thể là string (ObjectId)
   name: string;
   description: string;
-  price: number;
-  image: string;
+  price_250mg: number; // Cập nhật lại theo giá trị từ API
+  image_url: string; // Cập nhật lại theo đúng tên trường trong API
 }
 
 const CoffeeBeansList = ({ onPressProduct }: { onPressProduct: (item: CoffeeProduct) => void }) => {
-  // Giả lập dữ liệu cho Coffee Beans
-  const coffeeBeans: CoffeeProduct[] = [
-    {
-      id: 1,
-      name: 'Arabica Beans',
-      description: 'High-quality coffee beans from Ethiopia',
-      price: 15.0,
-      image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
-    },
-    {
-      id: 2,
-      name: 'Robusta Beans',
-      description: 'Strong and bold beans from Vietnam',
-      price: 12.5,
-      image: 'https://angelinos.com/cdn/shop/articles/How_Much_Milk_Coffee_in_a_Cappuccino.jpg',
-    },
-    {
-      id: 3,
-      name: 'Liberica Beans',
-      description: 'Fruity and floral coffee beans from the Philippines',
-      price: 18.0,
-      image: 'https://example.com/liberica.jpg',
-    },
-    // Thêm các sản phẩm khác ở đây
-  ];
+  const [coffeeBeans, setCoffeeBeans] = useState<CoffeeProduct[]>([]); // Lưu trữ dữ liệu từ API
+
+  useEffect(() => {
+    const fetchCoffeeBeans = async () => {
+      try {
+        const response = await api.get('coffeeBeans'); // Địa chỉ API của bạn
+        setCoffeeBeans(response.data); // Lưu trữ dữ liệu vào state
+      } catch (error) {
+        console.error('Error fetching coffee beans:', error);
+      }
+    };
+
+    fetchCoffeeBeans();
+  }, []);
 
   return (
     <View>
       <Text style={styles.sectionTitle}>COFFEE BEANS</Text>
       <FlatList
         horizontal
-        data={coffeeBeans} // Sử dụng trực tiếp dữ liệu từ mảng coffeeBeans
-        keyExtractor={item => item.id.toString()}
+        data={coffeeBeans} // Sử dụng trực tiếp dữ liệu từ API
+        keyExtractor={item => item.id ? item.id.toString() : item.name}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => onPressProduct(item)}>
             <View style={styles.card}>
-              <Image source={{ uri: item.image }} style={styles.productImage} />
+              <Image source={{ uri: item.image_url }} style={styles.productImage} />
               <View style={styles.productInfo}>
                 <Text style={styles.productName}>{item.name}</Text>
                 <Text style={styles.productDescription}>{item.description}</Text>
-                <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+                <Text style={styles.productPrice}>${item.price_250mg}</Text> {/* Sử dụng price_250mg từ API */}
               </View>
               <TouchableOpacity style={styles.addButton} onPress={() => onPressProduct(item)}>
                 <Icon name="plus" size={12} color="#0f4359" />

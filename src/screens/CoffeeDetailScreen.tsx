@@ -84,7 +84,7 @@ const CoffeeDetailScreen = ({ route, navigation }) => {
         <View style={styles.priceAndCartContainer}>
           <View>
             <Text style={styles.priceTitle}>Price</Text>
-            <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+            <Text style={styles.price}>${product.price}</Text>
           </View>
           <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
